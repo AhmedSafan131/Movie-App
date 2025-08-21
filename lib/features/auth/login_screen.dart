@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import '../../../utils/app_color.dart';
-import '../../../utils/app_style.dart';
-import '../../../utils/app_routes.dart';
-import '../../../services/auth_service.dart';
+import '../../utils/app_color.dart';
+import '../../utils/app_style.dart';
+import '../../utils/app_routes.dart';
+import '../../services/auth_service.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/custom_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -118,9 +120,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 20),
 
-                // Input Fields
-                TextFormField(
+                // Email Field
+                CustomTextField(
                   controller: _emailController,
+                  hintText: 'Email',
+                  keyboardType: TextInputType.emailAddress,
+                  prefixIcon: const Icon(Icons.email, color: AppColors.white),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Email is required';
@@ -131,76 +136,35 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                     return null;
                   },
-                  style: AppTextStyles.body.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Email',
-                    hintStyle: AppTextStyles.body
-                        .copyWith(color: AppColors.white.withOpacity(0.7)),
-                    prefixIcon: const Icon(Icons.email, color: AppColors.white),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.white),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.darkGray),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.accentYellow),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.darkGray,
-                  ),
                 ),
 
                 const SizedBox(height: 16),
 
-                TextFormField(
+                // Password Field
+                CustomTextField(
                   controller: _passwordController,
+                  hintText: 'Password',
                   obscureText: !_isPasswordVisible,
+                  prefixIcon: const Icon(Icons.lock, color: AppColors.white),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.white,
+                    ),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Password is required';
                     }
                     return null;
                   },
-                  style: AppTextStyles.body.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    hintStyle: AppTextStyles.body
-                        .copyWith(color: AppColors.white.withOpacity(0.7)),
-                    prefixIcon: const Icon(Icons.lock, color: AppColors.white),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                      icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: AppColors.white,
-                      ),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.white),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.darkGray),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.accentYellow),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.darkGray,
-                  ),
                 ),
 
                 // Forget Password
@@ -223,37 +187,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
 
                 // Login button
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentYellow,
-                      foregroundColor: AppColors.primaryBlack,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.primaryBlack),
-                            ),
-                          )
-                        : Text(
-                            'Login',
-                            style: AppTextStyles.button.copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                  ),
+                CustomButton(
+                  text: 'Login',
+                  onPressed: _login,
+                  isLoading: _isLoading,
                 ),
 
                 const SizedBox(height: 20),
@@ -318,41 +255,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 24),
 
                 // Google login button
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Handle Google login
+                CustomButton(
+                  text: 'Login With Google',
+                  onPressed: () {
+                    // Handle Google login
+                  },
+                  icon: Image.asset(
+                    'assets/images/google.png',
+                    width: 24,
+                    height: 24,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Fallback to icon if image is not found
+                      return const Icon(
+                        Icons.g_mobiledata,
+                        color: AppColors.primaryBlack,
+                        size: 24,
+                      );
                     },
-                    icon: Image.asset(
-                      'assets/images/google.png',
-                      width: 24,
-                      height: 24,
-                      errorBuilder: (context, error, stackTrace) {
-                        // Fallback to icon if image is not found
-                        return const Icon(
-                          Icons.g_mobiledata,
-                          color: AppColors.primaryBlack,
-                          size: 24,
-                        );
-                      },
-                    ),
-                    label: Text(
-                      'Login With Google',
-                      style: AppTextStyles.button.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentYellow,
-                      foregroundColor: AppColors.primaryBlack,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
                   ),
                 ),
 
