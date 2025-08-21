@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import '../../../utils/app_color.dart';
-import '../../../utils/app_style.dart';
-import '../../../utils/app_routes.dart';
-import '../../../services/auth_service.dart';
+import '../../utils/app_color.dart';
+import '../../utils/app_style.dart';
+import '../../utils/app_routes.dart';
+import '../../services/auth_service.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/custom_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -154,44 +156,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 16),
 
-                // Input Fields
-                TextFormField(
+                // Name Field
+                CustomTextField(
                   controller: _nameController,
+                  hintText: 'Name',
+                  prefixIcon: const Icon(Icons.person, color: AppColors.white),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Name is required';
                     }
                     return null;
                   },
-                  style: AppTextStyles.body.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Name',
-                    hintStyle: AppTextStyles.body
-                        .copyWith(color: AppColors.white.withOpacity(0.7)),
-                    prefixIcon:
-                        const Icon(Icons.person, color: AppColors.white),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.white),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.darkGray),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.accentYellow),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.darkGray,
-                  ),
                 ),
 
                 const SizedBox(height: 16),
 
-                TextFormField(
+                // Email Field
+                CustomTextField(
                   controller: _emailController,
+                  hintText: 'Email',
+                  keyboardType: TextInputType.emailAddress,
+                  prefixIcon: const Icon(Icons.email, color: AppColors.white),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Email is required';
@@ -202,35 +187,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                     return null;
                   },
-                  style: AppTextStyles.body.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Email',
-                    hintStyle: AppTextStyles.body
-                        .copyWith(color: AppColors.white.withOpacity(0.7)),
-                    prefixIcon: const Icon(Icons.email, color: AppColors.white),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.white),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.darkGray),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.accentYellow),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.darkGray,
-                  ),
                 ),
 
                 const SizedBox(height: 16),
 
-                TextFormField(
+                // Password Field
+                CustomTextField(
                   controller: _passwordController,
+                  hintText: 'Password',
                   obscureText: !_isPasswordVisible,
+                  prefixIcon: const Icon(Icons.lock, color: AppColors.white),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.white,
+                    ),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Password is required';
@@ -246,48 +225,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                     return null;
                   },
-                  style: AppTextStyles.body.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    hintStyle: AppTextStyles.body
-                        .copyWith(color: AppColors.white.withOpacity(0.7)),
-                    prefixIcon: const Icon(Icons.lock, color: AppColors.white),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                      icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: AppColors.white,
-                      ),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.white),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.darkGray),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.accentYellow),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.darkGray,
-                  ),
                 ),
 
                 const SizedBox(height: 16),
 
-                TextFormField(
+                // Confirm Password Field
+                CustomTextField(
                   controller: _confirmPasswordController,
+                  hintText: 'Confirm Password',
                   obscureText: !_isConfirmPasswordVisible,
+                  prefixIcon: const Icon(Icons.lock, color: AppColors.white),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
+                    },
+                    icon: Icon(
+                      _isConfirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.white,
+                    ),
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Confirm password is required';
@@ -297,48 +257,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                     return null;
                   },
-                  style: AppTextStyles.body.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Confirm Password',
-                    hintStyle: AppTextStyles.body
-                        .copyWith(color: AppColors.white.withOpacity(0.7)),
-                    prefixIcon: const Icon(Icons.lock, color: AppColors.white),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isConfirmPasswordVisible =
-                              !_isConfirmPasswordVisible;
-                        });
-                      },
-                      icon: Icon(
-                        _isConfirmPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: AppColors.white,
-                      ),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.white),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.darkGray),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.accentYellow),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.darkGray,
-                  ),
                 ),
 
                 const SizedBox(height: 16),
 
-                TextFormField(
+                // Phone Field
+                CustomTextField(
                   controller: _phoneController,
+                  hintText: 'Phone Number',
+                  keyboardType: TextInputType.phone,
+                  prefixIcon: const Icon(Icons.phone, color: AppColors.white),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Phone number is required';
@@ -350,64 +278,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                     return null;
                   },
-                  style: AppTextStyles.body.copyWith(color: AppColors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Phone Number',
-                    hintStyle: AppTextStyles.body
-                        .copyWith(color: AppColors.white.withOpacity(0.7)),
-                    prefixIcon: const Icon(Icons.phone, color: AppColors.white),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.white),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.darkGray),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.accentYellow),
-                    ),
-                    filled: true,
-                    fillColor: AppColors.darkGray,
-                  ),
                 ),
 
                 const SizedBox(height: 32),
 
                 // Create Account button
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _register,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentYellow,
-                      foregroundColor: AppColors.primaryBlack,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.primaryBlack),
-                            ),
-                          )
-                        : Text(
-                            'Create Account',
-                            style: AppTextStyles.button.copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                  ),
+                CustomButton(
+                  text: 'Create Account',
+                  onPressed: _register,
+                  isLoading: _isLoading,
                 ),
 
                 const SizedBox(height: 32),
