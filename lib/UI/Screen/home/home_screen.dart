@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.pageBackground,
+      backgroundColor: AppColors.primaryBlack,
       body: _buildBody(),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha:  0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 5),
               ),
@@ -38,10 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(0, Icons.home, 'Home'),
-              _buildNavItem(1, Icons.search, 'Search'),
-              _buildNavItem(2, Icons.explore, 'Details'),
-              _buildNavItem(3, Icons.person, 'Profile'),
+              _buildNavItem(0, 'assets/images/home_icon.png', 'Home'),
+              _buildNavItem(1, 'assets/images/search_icon.png', 'Search'),
+              _buildNavItem(2, 'assets/images/explore.png', 'Details'),
+              _buildNavItem(3, 'assets/images/Profiel.png', 'Profile'),
             ],
           ),
         ),
@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  Widget _buildNavItem(int index, String iconPath, String label) {
     final isSelected = _selectedIndex == index;
     return GestureDetector(
       onTap: () {
@@ -72,28 +72,43 @@ class _HomeScreenState extends State<HomeScreen> {
           _selectedIndex = index;
         });
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: isSelected
-                ? AppColors.accentYellow
-                : AppColors.white.withValues(alpha:  0.7),
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Image.asset(
+          iconPath,
+          width: 24,
+          height: 24,
+          color: isSelected
+              ? AppColors.accentYellow
+              : AppColors.white.withValues(alpha: 0.7),
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback to default icons if custom icons fail to load
+            IconData fallbackIcon;
+            switch (index) {
+              case 0:
+                fallbackIcon = Icons.home;
+                break;
+              case 1:
+                fallbackIcon = Icons.search;
+                break;
+              case 2:
+                fallbackIcon = Icons.explore;
+                break;
+              case 3:
+                fallbackIcon = Icons.person;
+                break;
+              default:
+                fallbackIcon = Icons.home;
+            }
+            return Icon(
+              fallbackIcon,
               color: isSelected
                   ? AppColors.accentYellow
-                  : AppColors.white.withValues(alpha:  0.7),
-              fontSize: 12,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-        ],
+                  : AppColors.white.withValues(alpha: 0.7),
+              size: 24,
+            );
+          },
+        ),
       ),
     );
   }

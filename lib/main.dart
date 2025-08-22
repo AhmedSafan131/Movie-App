@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/UI/Screen/profile/update_profile.dart';
 import 'package:movie_app/l10n/app_localizations.dart';
 import 'package:movie_app/utils/app_themes.dart';
 import 'utils/app_routes.dart';
@@ -36,7 +35,6 @@ class MyApp extends StatelessWidget {
         AppRoutes.register: (context) => const RegisterScreen(),
         AppRoutes.forgetPassword: (context) => const ForgetPasswordScreen(),
         AppRoutes.home: (context) => const HomeScreen(),
-        AppRoutes.updateProfileRouteName: (context) => UpdateProfile(),
       },
     );
   }
