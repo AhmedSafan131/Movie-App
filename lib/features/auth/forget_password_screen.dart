@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../utils/app_color.dart';
-import '../../utils/app_style.dart';
-import '../../utils/app_routes.dart';
+import 'package:movie_app/utils/app_colors.dart';
+import 'package:movie_app/utils/app_styles.dart';
 import '../../services/auth_service.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/custom_button.dart';
+import '../../UI/widgets/custom_text_field.dart';
+import '../../UI/widgets/custom_button.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -47,8 +46,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(response['message'] ?? 'Reset email sent successfully!'),
+            content: Text(
+              response['message'] ?? 'Reset email sent successfully!',
+            ),
             backgroundColor: AppColors.successGreen,
           ),
         );
@@ -101,11 +101,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       child: Center(
                         child: Text(
                           'Forget Password',
-                          style: AppTextStyles.h2.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.accentYellow,
-                          ),
+                          style: AppStyles.medium16Yellow,
                         ),
                       ),
                     ),
@@ -117,7 +113,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
                 // Illustration
                 Center(
-                  child: Container(
+                  child: SizedBox(
                     width: 300,
                     height: 250,
                     child: Image.asset(
@@ -190,8 +186,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                                         height: 8,
                                         decoration: BoxDecoration(
                                           color: AppColors.primaryBlack,
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -222,24 +219,14 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 const SizedBox(height: 40),
 
                 // Title
-                Text(
-                  'Forgot Your Password?',
-                  style: AppTextStyles.h1.copyWith(
-                    color: AppColors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Text('Forgot Your Password?', style: AppStyles.medium24White),
 
                 const SizedBox(height: 8),
 
                 // Subtitle
                 Text(
                   'Enter your email address and we\'ll send you a link to reset your password',
-                  style: AppTextStyles.body.copyWith(
-                    color: AppColors.white.withOpacity(0.7),
-                    fontSize: 16,
-                  ),
+                  style: AppStyles.medium16White,
                 ),
 
                 const SizedBox(height: 32),
@@ -255,8 +242,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       return 'Email is required';
                     }
                     // Email validation regex
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
                       return 'Please enter a valid email address';
                     }
                     return null;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../utils/app_color.dart';
+import 'package:movie_app/utils/app_colors.dart';
+
 
 class SearchTab extends StatelessWidget {
   const SearchTab({super.key});
@@ -28,7 +29,7 @@ class SearchTab extends StatelessWidget {
           Text(
             'Search for your favorite movies!',
             style: TextStyle(
-              color: AppColors.white.withOpacity(0.7),
+              color: AppColors.white.withValues(alpha:  0.7),
               fontSize: 16,
             ),
           ),

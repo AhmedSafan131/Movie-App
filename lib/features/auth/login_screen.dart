@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import '../../utils/app_color.dart';
-import '../../utils/app_style.dart';
+import 'package:movie_app/utils/app_colors.dart';
+import 'package:movie_app/utils/app_styles.dart';
 import '../../utils/app_routes.dart';
 import '../../services/auth_service.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/custom_button.dart';
+import '../../UI/widgets/custom_text_field.dart';
+import '../../UI/widgets/custom_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 // Logo
                 Center(
-                  child: Container(
+                  child: SizedBox(
                     width: 180,
                     height: 180,
                     child: Image.asset(
@@ -176,10 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Forget Password ?',
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColors.accentYellow,
-                        fontSize: 14,
-                      ),
+                      style:  AppStyles.medium14Yellow,
                     ),
                   ),
                 ),
@@ -199,10 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColors.white,
-                        fontSize: 14,
-                      ),
+                      style:  AppStyles.medium14White,
                       children: [
                         const TextSpan(text: "Don't Have Account ? "),
                         TextSpan(
@@ -237,10 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
                         'OR',
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.accentYellow,
-                          fontSize: 14,
-                        ),
+                        style: AppStyles.medium14Yellow,
                       ),
                     ),
                     Expanded(

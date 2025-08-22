@@ -13,7 +13,9 @@ class AppColors {
   static const Color accentYellow = Color(0xFFFFBB3B);
   static const Color successGreen = Color(0xFF57AA53);
   static const Color errorRed = Color(0xFFEB2626);
+  static const Color yellowColor = Color(0xFFF6BD00);
 
   // Base
   static const Color white = Color(0xFFFFFFFF);
+  static const Color transparentColor = Colors.transparent;
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/UI/Screen/profile/update_profile.dart';
+import 'package:movie_app/l10n/app_localizations.dart';
+import 'package:movie_app/utils/app_themes.dart';
 import 'utils/app_routes.dart';
-import 'utils/app_theme.dart';
+
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/auth/forget_password_screen.dart';
-import 'features/home/home_screen.dart';
+import 'UI/Screen/home/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,14 +23,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Movies App',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      initialRoute: AppRoutes.onboarding,
+      locale: Locale('en'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.dark,
+      initialRoute: AppRoutes.login,
       routes: {
         AppRoutes.onboarding: (context) => const OnboardingScreen(),
         AppRoutes.login: (context) => const LoginScreen(),
         AppRoutes.register: (context) => const RegisterScreen(),
         AppRoutes.forgetPassword: (context) => const ForgetPasswordScreen(),
         AppRoutes.home: (context) => const HomeScreen(),
+        AppRoutes.updateProfileRouteName: (context) => UpdateProfile(),
       },
     );
   }

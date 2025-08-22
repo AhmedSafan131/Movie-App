@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/app_color.dart';
+import 'package:movie_app/utils/app_colors.dart';
 import 'tabs/home_tab.dart';
 import 'tabs/search_tab.dart';
 import 'tabs/details_tab.dart';
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha:  0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 5),
               ),
@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon,
             color: isSelected
                 ? AppColors.accentYellow
-                : AppColors.white.withOpacity(0.7),
+                : AppColors.white.withValues(alpha:  0.7),
             size: 24,
           ),
           const SizedBox(height: 4),
@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(
               color: isSelected
                   ? AppColors.accentYellow
-                  : AppColors.white.withOpacity(0.7),
+                  : AppColors.white.withValues(alpha:  0.7),
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),

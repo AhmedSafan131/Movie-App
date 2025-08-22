@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -23,13 +25,12 @@ class AuthService {
       };
 
       print(
-          'Sending registration request with body: ${jsonEncode(requestBody)}');
+        'Sending registration request with body: ${jsonEncode(requestBody)}',
+      );
 
       final response = await http.post(
         Uri.parse('$baseUrl/auth/register'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
 
@@ -43,10 +44,12 @@ class AuthService {
         try {
           final errorResponse = jsonDecode(response.body);
           throw Exception(
-              'Registration failed: ${errorResponse['message'] ?? 'Status ${response.statusCode}'}');
+            'Registration failed: ${errorResponse['message'] ?? 'Status ${response.statusCode}'}',
+          );
         } catch (e) {
           throw Exception(
-              'Registration failed: Status ${response.statusCode} - ${response.body}');
+            'Registration failed: Status ${response.statusCode} - ${response.body}',
+          );
         }
       }
     } catch (e) {
@@ -64,13 +67,8 @@ class AuthService {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/auth/login'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
       );
 
       if (response.statusCode == 200) {
@@ -106,12 +104,8 @@ class AuthService {
         print('Trying endpoint: $baseUrl$endpoint');
         final response = await http.post(
           Uri.parse('$baseUrl$endpoint'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'email': email,
-          }),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'email': email}),
         );
 
         print('Response status for $endpoint: ${response.statusCode}');
@@ -129,10 +123,12 @@ class AuthService {
           try {
             final errorResponse = jsonDecode(response.body);
             throw Exception(
-                'Forget password failed: ${errorResponse['message'] ?? 'Status ${response.statusCode}'}');
+              'Forget password failed: ${errorResponse['message'] ?? 'Status ${response.statusCode}'}',
+            );
           } catch (e) {
             throw Exception(
-                'Forget password failed: Status ${response.statusCode} - ${response.body}');
+              'Forget password failed: Status ${response.statusCode} - ${response.body}',
+            );
           }
         }
       } catch (e) {
@@ -147,6 +143,7 @@ class AuthService {
 
     // If all endpoints fail, throw a generic error with helpful information
     throw Exception(
-        'Forget password failed: No valid endpoint found. The API might not support automatic password reset emails. Please contact support or use the manual password reset feature.');
+      'Forget password failed: No valid endpoint found. The API might not support automatic password reset emails. Please contact support or use the manual password reset feature.',
+    );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../utils/app_color.dart';
-import '../../../utils/app_style.dart';
+import 'package:movie_app/utils/app_colors.dart';
 import '../../../utils/app_routes.dart';
 import 'onboarding_page.dart';
 

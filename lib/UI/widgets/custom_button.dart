@@ -1,37 +1,35 @@
 import 'package:flutter/material.dart';
-import '../utils/app_color.dart';
+import 'package:movie_app/utils/app_colors.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
   final bool isLoading;
   final bool isOutlined;
   final double? width;
   final double height;
-  final Color? backgroundColor;
-  final Color? textColor;
+  final Color backgroundColor;
+  final Color textColor;
   final double borderRadius;
   final Widget? icon;
 
   const CustomButton({
     super.key,
     required this.text,
-    this.onPressed,
+    required this.onPressed,
     this.isLoading = false,
     this.isOutlined = false,
     this.width,
     this.height = 50,
-    this.backgroundColor,
-    this.textColor,
+    this.backgroundColor= AppColors.yellowColor,
+    this.textColor=AppColors.primaryBlack,
     this.borderRadius = 12,
     this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
-    final buttonColor = backgroundColor ?? AppColors.accentYellow;
-    final textColorFinal = textColor ?? AppColors.primaryBlack;
-
+  
     return SizedBox(
       width: width ?? double.infinity,
       height: height,
@@ -40,7 +38,7 @@ class CustomButton extends StatelessWidget {
               onPressed: isLoading ? null : onPressed,
               style: OutlinedButton.styleFrom(
                 side: BorderSide(
-                  color: buttonColor,
+                  color: backgroundColor,
                   width: 2,
                 ),
                 shape: RoundedRectangleBorder(
@@ -49,13 +47,13 @@ class CustomButton extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              child: _buildButtonContent(textColorFinal),
+              child: _buildButtonContent(textColor),
             )
           : ElevatedButton(
               onPressed: isLoading ? null : onPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor,
-                foregroundColor: textColorFinal,
+                backgroundColor: backgroundColor,
+                foregroundColor: textColor,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
@@ -63,7 +61,7 @@ class CustomButton extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              child: _buildButtonContent(textColorFinal),
+              child: _buildButtonContent(textColor),
             ),
     );
   }

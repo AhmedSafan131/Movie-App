@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import '../../utils/app_color.dart';
-import '../../utils/app_style.dart';
+import 'package:movie_app/utils/app_colors.dart';
+import 'package:movie_app/utils/app_styles.dart';
 import '../../utils/app_routes.dart';
 import '../../services/auth_service.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/custom_button.dart';
+import '../../UI/widgets/custom_text_field.dart';
+import '../../UI/widgets/custom_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -62,11 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Center(
                         child: Text(
                           'Register',
-                          style: AppTextStyles.h2.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.accentYellow,
-                          ),
+                          style:AppStyles.medium18Yellow,
                         ),
                       ),
                     ),
@@ -81,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     children: [
                       // Horizontal Scrollable Avatar List with Selected Larger
-                      Container(
+                      SizedBox(
                         height: 100,
                         width: double.infinity,
                         child: PageView.builder(
@@ -145,10 +141,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 12),
                       Text(
                         'Avatar',
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.white,
-                          fontSize: 16,
-                        ),
+                        style:  AppStyles.medium16White,
                       ),
                     ],
                   ),
@@ -295,10 +288,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColors.white,
-                        fontSize: 14,
-                      ),
+                      style:  AppStyles.medium14White,
                       children: [
                         const TextSpan(text: 'Already Have Account ? '),
                         TextSpan(
@@ -346,14 +336,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      // Debug: Print the data being sent
-      print('Registration data:');
-      print('Name: ${_nameController.text.trim()}');
-      print('Email: ${_emailController.text.trim()}');
-      print('Password: ${_passwordController.text}');
-      print('Confirm Password: ${_confirmPasswordController.text}');
-      print('Phone: ${_phoneController.text.trim()}');
-      print('Avatar ID: ${selectedAvatar + 1}');
+      // // Debug: Print the data being sent
+      // print('Registration data:');
+      // print('Name: ${_nameController.text.trim()}');
+      // print('Email: ${_emailController.text.trim()}');
+      // print('Password: ${_passwordController.text}');
+      // print('Confirm Password: ${_confirmPasswordController.text}');
+      // print('Phone: ${_phoneController.text.trim()}');
+      // print('Avatar ID: ${selectedAvatar + 1}');
 
       final response = await AuthService.register(
         name: _nameController.text.trim(),
