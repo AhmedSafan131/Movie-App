@@ -6,6 +6,7 @@ import 'package:movie_app/l10n/app_localizations.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
 import 'package:movie_app/utils/assets_manager.dart';
+import 'package:movie_app/utils/app_routes.dart';
 
 class UpdateProfile extends StatefulWidget {
   final String currentName;
@@ -102,7 +103,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRoutes.resetPassword);
+                },
                 child: Text(
                   AppLocalizations.of(context)!.reset_password,
                   style: AppStyles.medium20White,
