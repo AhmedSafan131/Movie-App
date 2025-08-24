@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
 import '../../utils/app_routes.dart';
 import '../../services/auth_service.dart';
 import '../../UI/widgets/custom_text_field.dart';
 import '../../UI/widgets/custom_button.dart';
+import '../../blocs/user/user_bloc.dart';
+import '../../blocs/user/user_event.dart';
+import '../../blocs/user/user_state.dart';
+import '../../models/user_model.dart';
+import '../../repositories/user_repository.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,8 +56,30 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
 
-      // Show success message
+      // Try to load existing user data first
+      final userRepository = UserRepository();
+      final existingUser = await userRepository.loadUser();
+
+      UserModel user;
+      if (existingUser != null) {
+        // Preserve existing profile data, only update email from login
+        user = existingUser.copyWith(email: _emailController.text.trim());
+        print('Login: Preserving existing user data: $user');
+      } else {
+        // Create new user from login response
+        user = UserModel(
+          name: response['user']?['name'] ?? 'User',
+          phone: response['user']?['phone'] ?? '',
+          avatar: response['user']?['avatar'] ?? 'assets/images/avatar1.png',
+          email: _emailController.text.trim(),
+        );
+        print('Login: Creating new user from API response: $user');
+      }
+
+      // Store user data using BLoC
       if (mounted) {
+        context.read<UserBloc>().add(UpdateUser(user));
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(response['message'] ?? 'Login successful!'),
@@ -130,8 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Email is required';
                     }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
                       return 'Please enter a valid email';
                     }
                     return null;
@@ -176,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Forget Password ?',
-                      style:  AppStyles.medium14Yellow,
+                      style: AppStyles.medium14Yellow,
                     ),
                   ),
                 ),
@@ -196,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      style:  AppStyles.medium14White,
+                      style: AppStyles.medium14White,
                       children: [
                         const TextSpan(text: "Don't Have Account ? "),
                         TextSpan(
@@ -207,8 +236,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Navigator.of(context)
-                                  .pushNamed(AppRoutes.register);
+                              Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.register);
                             },
                         ),
                       ],
@@ -229,10 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'OR',
-                        style: AppStyles.medium14Yellow,
-                      ),
+                      child: Text('OR', style: AppStyles.medium14Yellow),
                     ),
                     Expanded(
                       child: Container(

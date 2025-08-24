@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:movie_app/UI/widgets/custom_button.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
 import 'package:movie_app/utils/app_routes.dart';
 import 'package:movie_app/UI/Screen/profile/update_profile.dart';
+import 'package:movie_app/blocs/user/user_bloc.dart';
+import 'package:movie_app/blocs/user/user_event.dart';
+import 'package:movie_app/blocs/user/user_state.dart';
+import 'package:movie_app/models/user_model.dart';
+import 'package:movie_app/repositories/user_repository.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -14,59 +20,80 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
-  late ProfileController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = ProfileController();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  int selectedTabIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.primaryBlack,
-      child: ListenableBuilder(
-        listenable: _controller,
-        builder: (context, child) {
-          return Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 50), // Space for status bar
-                // User Information Section
-                _buildUserInfoSection(),
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          if (state is UserLoading) {
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.accentYellow),
+            );
+          }
 
-                const SizedBox(height: 24),
+          if (state is UserError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Error: ${state.message}',
+                    style: AppStyles.medium16White,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<UserBloc>().add(const LoadUser());
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
 
-                // Action Buttons
-                _buildActionButtons(context),
+          if (state is UserLoaded) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 50), // Space for status bar
+                  // User Information Section
+                  _buildUserInfoSection(state.user),
 
-                const SizedBox(height: 30),
+                  const SizedBox(height: 24),
 
-                // Secondary Navigation Tabs
-                _buildSecondaryTabs(),
+                  // Action Buttons
+                  _buildActionButtons(context, state.user),
 
-                const SizedBox(height: 20),
+                  const SizedBox(height: 30),
 
-                // Content Area
-                Expanded(child: _buildContentArea()),
-              ],
-            ),
+                  // Secondary Navigation Tabs
+                  _buildSecondaryTabs(),
+
+                  const SizedBox(height: 20),
+
+                  // Content Area
+                  Expanded(child: _buildContentArea()),
+                ],
+              ),
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.accentYellow),
           );
         },
       ),
     );
   }
 
-  Widget _buildUserInfoSection() {
+  Widget _buildUserInfoSection(UserModel user) {
     return Row(
       children: [
         // Profile Picture and Name
@@ -78,7 +105,7 @@ class _ProfileTabState extends State<ProfileTab> {
               decoration: BoxDecoration(shape: BoxShape.circle),
               child: ClipOval(
                 child: Image.asset(
-                  _controller.userAvatar,
+                  user.avatar,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
@@ -97,7 +124,7 @@ class _ProfileTabState extends State<ProfileTab> {
               ),
             ),
             const SizedBox(height: 8),
-            Text(_controller.userName, style: AppStyles.bold16White),
+            Text(user.name, style: AppStyles.bold16White),
           ],
         ),
 
@@ -115,10 +142,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   // Wish List
                   Column(
                     children: [
-                      Text(
-                        '${_controller.wishListCount}',
-                        style: AppStyles.bold24White,
-                      ),
+                      Text('12', style: AppStyles.bold24White),
                       const SizedBox(height: 20),
                       Text(
                         'Wish List',
@@ -132,10 +156,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   // History
                   Column(
                     children: [
-                      Text(
-                        '${_controller.historyCount}',
-                        style: AppStyles.bold24White,
-                      ),
+                      Text('10', style: AppStyles.bold24White),
                       const SizedBox(height: 20),
                       Text(
                         'History',
@@ -154,7 +175,7 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(BuildContext context, UserModel user) {
     return Row(
       children: [
         // Edit Profile Button (Bigger)
@@ -162,7 +183,7 @@ class _ProfileTabState extends State<ProfileTab> {
           flex: 3,
           child: CustomButton(
             text: 'Edit Profile',
-            onPressed: () => _controller.onEditProfilePressed(context),
+            onPressed: () => _onEditProfilePressed(context, user),
             backgroundColor: AppColors.accentYellow,
             textColor: AppColors.primaryBlack,
           ),
@@ -175,7 +196,7 @@ class _ProfileTabState extends State<ProfileTab> {
           flex: 2,
           child: CustomButton(
             text: 'Exit',
-            onPressed: () => _controller.onExitPressed(context),
+            onPressed: () => _onExitPressed(context),
             backgroundColor: AppColors.errorRed,
             textColor: AppColors.white,
             icon: const Icon(
@@ -189,18 +210,85 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
+  void _onEditProfilePressed(BuildContext context, UserModel user) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => UpdateProfile(
+          currentName: user.name,
+          currentAvatar: user.avatar,
+          currentPhone: user.phone,
+          onProfileUpdated: (newName, newAvatar, newPhone) {
+            context.read<UserBloc>().add(
+              UpdateUser(
+                user.copyWith(
+                  name: newName,
+                  avatar: newAvatar,
+                  phone: newPhone,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _onExitPressed(BuildContext context) {
+    _showLogoutDialog(context);
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.darkGray,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text('Exit', style: AppStyles.bold20White),
+          content: Text(
+            'Are you sure you want to exit?',
+            style: AppStyles.medium16White,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel', style: AppStyles.medium16White),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(
+                  context,
+                ).pushReplacementNamed(AppRoutes.onboarding);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.errorRed,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text('Exit', style: AppStyles.medium16White),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildSecondaryTabs() {
     return Row(
       children: [
         // Watch List Tab
         Expanded(
           child: GestureDetector(
-            onTap: () => _controller.onTabChanged(0),
+            onTap: () => setState(() => selectedTabIndex = 0),
             child: Column(
               children: [
                 Icon(
                   Icons.list,
-                  color: _controller.selectedTabIndex == 0
+                  color: selectedTabIndex == 0
                       ? AppColors.accentYellow
                       : AppColors.white.withOpacity(0.7),
                   size: 24,
@@ -209,7 +297,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 Text(
                   'Watch List',
                   style: AppStyles.medium16White.copyWith(
-                    color: _controller.selectedTabIndex == 0
+                    color: selectedTabIndex == 0
                         ? AppColors.accentYellow
                         : AppColors.white.withOpacity(0.7),
                   ),
@@ -218,7 +306,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 Container(
                   height: 3,
                   decoration: BoxDecoration(
-                    color: _controller.selectedTabIndex == 0
+                    color: selectedTabIndex == 0
                         ? AppColors.accentYellow
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(2),
@@ -232,12 +320,12 @@ class _ProfileTabState extends State<ProfileTab> {
         // History Tab
         Expanded(
           child: GestureDetector(
-            onTap: () => _controller.onTabChanged(1),
+            onTap: () => setState(() => selectedTabIndex = 1),
             child: Column(
               children: [
                 Icon(
                   Icons.folder,
-                  color: _controller.selectedTabIndex == 1
+                  color: selectedTabIndex == 1
                       ? AppColors.accentYellow
                       : AppColors.white.withOpacity(0.7),
                   size: 24,
@@ -246,7 +334,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 Text(
                   'History',
                   style: AppStyles.medium16White.copyWith(
-                    color: _controller.selectedTabIndex == 1
+                    color: selectedTabIndex == 1
                         ? AppColors.accentYellow
                         : AppColors.white.withOpacity(0.7),
                   ),
@@ -255,7 +343,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 Container(
                   height: 3,
                   decoration: BoxDecoration(
-                    color: _controller.selectedTabIndex == 1
+                    color: selectedTabIndex == 1
                         ? AppColors.accentYellow
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(2),
@@ -413,7 +501,7 @@ class _ProfileTabState extends State<ProfileTab> {
           const SizedBox(height: 20),
 
           Text(
-            _controller.selectedTabIndex == 0
+            selectedTabIndex == 0
                 ? 'No movies in your watch list'
                 : 'No movies in your history',
             style: AppStyles.medium16White.copyWith(
@@ -424,150 +512,5 @@ class _ProfileTabState extends State<ProfileTab> {
         ],
       ),
     );
-  }
-}
-
-// Controller class to handle all the logic
-class ProfileController extends ChangeNotifier {
-  int selectedTabIndex = 0;
-  String userAvatar = 'assets/images/avatar1.png';
-  String userName = 'John Safwat';
-  String userPhone = '01000000000';
-  int wishListCount = 12;
-  int historyCount = 10;
-
-  // Storage keys
-  static const String _avatarKey = 'user_avatar';
-  static const String _nameKey = 'user_name';
-  static const String _phoneKey = 'user_phone';
-  static const String _wishListKey = 'wish_list_count';
-  static const String _historyKey = 'history_count';
-
-  ProfileController() {
-    _loadProfileData();
-  }
-
-  // Load saved profile data
-  Future<void> _loadProfileData() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-
-      userAvatar = prefs.getString(_avatarKey) ?? 'assets/images/avatar1.png';
-      userName = prefs.getString(_nameKey) ?? 'John Safwat';
-      userPhone = prefs.getString(_phoneKey) ?? '01000000000';
-      wishListCount = prefs.getInt(_wishListKey) ?? 12;
-      historyCount = prefs.getInt(_historyKey) ?? 10;
-
-      notifyListeners();
-    } catch (e) {
-      print('Error loading profile data: $e');
-    }
-  }
-
-  // Save profile data
-  Future<void> _saveProfileData() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-
-      await prefs.setString(_avatarKey, userAvatar);
-      await prefs.setString(_nameKey, userName);
-      await prefs.setString(_phoneKey, userPhone);
-      await prefs.setInt(_wishListKey, wishListCount);
-      await prefs.setInt(_historyKey, historyCount);
-    } catch (e) {
-      print('Error saving profile data: $e');
-    }
-  }
-
-  void onTabChanged(int index) {
-    selectedTabIndex = index;
-    notifyListeners();
-  }
-
-  void onEditProfilePressed(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => UpdateProfile(
-          currentName: userName,
-          currentAvatar: userAvatar,
-          currentPhone: userPhone,
-          onProfileUpdated: (newName, newAvatar, newPhone) {
-            updateUserData(
-              newName: newName,
-              newAvatar: newAvatar,
-              newPhone: newPhone,
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  void onExitPressed(BuildContext context) {
-    _showLogoutDialog(context);
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: AppColors.darkGray,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Text('Exit', style: AppStyles.bold20White),
-          content: Text(
-            'Are you sure you want to exit?',
-            style: AppStyles.medium16White,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: AppStyles.medium16White),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(
-                  context,
-                ).pushReplacementNamed(AppRoutes.onboarding);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.errorRed,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text('Exit', style: AppStyles.medium16White),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void updateUserData({
-    String? newAvatar,
-    String? newName,
-    String? newPhone,
-    int? newWishListCount,
-    int? newHistoryCount,
-  }) {
-    if (newAvatar != null) userAvatar = newAvatar;
-    if (newName != null) userName = newName;
-    if (newPhone != null) userPhone = newPhone;
-    if (newWishListCount != null) wishListCount = newWishListCount;
-    if (newHistoryCount != null) historyCount = newHistoryCount;
-
-    // Save data immediately when updated
-    _saveProfileData();
-
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

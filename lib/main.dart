@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:movie_app/l10n/app_localizations.dart';
 import 'package:movie_app/utils/app_themes.dart';
 import 'utils/app_routes.dart';
@@ -8,8 +10,14 @@ import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/auth/forget_password_screen.dart';
 import 'UI/Screen/home/home_screen.dart';
+import 'UI/Screen/auth/reset_password_screen.dart';
+import 'blocs/user/user_bloc.dart';
+import 'blocs/user/user_event.dart';
+import 'repositories/user_repository.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferences.getInstance(); // Initialize SharedPreferences
   runApp(const MyApp());
 }
 
@@ -19,23 +27,32 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Movies App',
-      debugShowCheckedModeBanner: false,
-      locale: Locale('en'),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
-      initialRoute: AppRoutes.login,
-      routes: {
-        AppRoutes.onboarding: (context) => const OnboardingScreen(),
-        AppRoutes.login: (context) => const LoginScreen(),
-        AppRoutes.register: (context) => const RegisterScreen(),
-        AppRoutes.forgetPassword: (context) => const ForgetPasswordScreen(),
-        AppRoutes.home: (context) => const HomeScreen(),
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserBloc>(
+          create: (context) =>
+              UserBloc(userRepository: UserRepository())..add(const LoadUser()),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Movies App',
+        debugShowCheckedModeBanner: false,
+        locale: Locale('en'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark,
+        initialRoute: AppRoutes.login,
+        routes: {
+          AppRoutes.onboarding: (context) => const OnboardingScreen(),
+          AppRoutes.login: (context) => const LoginScreen(),
+          AppRoutes.register: (context) => const RegisterScreen(),
+          AppRoutes.forgetPassword: (context) => const ForgetPasswordScreen(),
+          AppRoutes.resetPassword: (context) => const ResetPasswordScreen(),
+          AppRoutes.home: (context) => const HomeScreen(),
+        },
+      ),
     );
   }
 }
