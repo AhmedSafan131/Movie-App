@@ -7,9 +7,12 @@ import '../../utils/app_routes.dart';
 import '../../services/auth_service.dart';
 import '../../UI/widgets/custom_text_field.dart';
 import '../../UI/widgets/custom_button.dart';
+import '../../UI/widgets/auth/auth_header.dart';
+import '../../UI/widgets/auth/password_field.dart';
+import '../../UI/widgets/auth/auth_form.dart';
+import '../../utils/auth_validators.dart';
 import '../../blocs/user/user_bloc.dart';
 import '../../blocs/user/user_event.dart';
-import '../../blocs/user/user_state.dart';
 import '../../models/user_model.dart';
 import '../../repositories/user_repository.dart';
 
@@ -21,18 +24,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Form controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  // Form key for validation
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  // Loading state
   bool _isLoading = false;
-
-  // Password visibility state
-  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -42,13 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final response = await AuthService.login(
@@ -56,55 +47,50 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
 
-      // Try to load existing user data first
-      final userRepository = UserRepository();
-      final existingUser = await userRepository.loadUser();
-
-      UserModel user;
-      if (existingUser != null) {
-        // Preserve existing profile data, only update email from login
-        user = existingUser.copyWith(email: _emailController.text.trim());
-        print('Login: Preserving existing user data: $user');
-      } else {
-        // Create new user from login response
-        user = UserModel(
-          name: response['user']?['name'] ?? 'User',
-          phone: response['user']?['phone'] ?? '',
-          avatar: response['user']?['avatar'] ?? 'assets/images/avatar1.png',
-          email: _emailController.text.trim(),
-        );
-        print('Login: Creating new user from API response: $user');
-      }
-
-      // Store user data using BLoC
-      if (mounted) {
-        context.read<UserBloc>().add(UpdateUser(user));
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response['message'] ?? 'Login successful!'),
-            backgroundColor: AppColors.successGreen,
-          ),
-        );
-
-        // Navigate to home screen
-        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
-      }
+      await _handleLoginSuccess(response);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login failed: ${e.toString()}'),
-            backgroundColor: AppColors.errorRed,
-          ),
-        );
-      }
+      _showErrorSnackBar('Login failed: ${e.toString()}');
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleLoginSuccess(Map<String, dynamic> response) async {
+    final userRepository = UserRepository();
+    final existingUser = await userRepository.loadUser();
+
+    UserModel user;
+    if (existingUser != null) {
+      user = existingUser.copyWith(email: _emailController.text.trim());
+      print('Login: Preserving existing user data: $user');
+    } else {
+      user = UserModel(
+        name: response['user']?['name'] ?? 'User',
+        phone: response['user']?['phone'] ?? '',
+        avatar: response['user']?['avatar'] ?? 'assets/images/avatar1.png',
+        email: _emailController.text.trim(),
+      );
+      print('Login: Creating new user from API response: $user');
+    }
+
+    if (mounted) {
+      context.read<UserBloc>().add(UpdateUser(user));
+      _showSuccessSnackBar(response['message'] ?? 'Login successful!');
+      Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+    }
+  }
+
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: AppColors.successGreen),
+    );
+  }
+
+  void _showErrorSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: AppColors.errorRed),
+      );
     }
   }
 
@@ -129,7 +115,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       'assets/images/logo.png',
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
-                        // Fallback to play button if image is not found
                         return Container(
                           decoration: BoxDecoration(
                             color: AppColors.accentYellow,
@@ -154,40 +139,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintText: 'Email',
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: const Icon(Icons.email, color: AppColors.white),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email is required';
-                    }
-                    if (!RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    ).hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
+                  validator: AuthValidators.validateEmail,
                 ),
 
                 const SizedBox(height: 16),
 
                 // Password Field
-                CustomTextField(
+                PasswordField(
                   controller: _passwordController,
                   hintText: 'Password',
-                  obscureText: !_isPasswordVisible,
-                  prefixIcon: const Icon(Icons.lock, color: AppColors.white),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: AppColors.white,
-                    ),
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Password is required';
@@ -283,7 +243,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 24,
                     height: 24,
                     errorBuilder: (context, error, stackTrace) {
-                      // Fallback to icon if image is not found
                       return const Icon(
                         Icons.g_mobiledata,
                         color: AppColors.primaryBlack,

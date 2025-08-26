@@ -4,6 +4,7 @@ import 'package:movie_app/utils/app_styles.dart';
 import '../../services/auth_service.dart';
 import '../../UI/widgets/custom_text_field.dart';
 import '../../UI/widgets/custom_button.dart';
+import '../../utils/auth_validators.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -13,13 +14,8 @@ class ForgetPasswordScreen extends StatefulWidget {
 }
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
-  // Form controller
   final TextEditingController _emailController = TextEditingController();
-
-  // Form key for validation
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  // Loading state
   bool _isLoading = false;
 
   @override
@@ -29,48 +25,39 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   }
 
   Future<void> _sendResetEmail() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final response = await AuthService.forgetPassword(
         email: _emailController.text.trim(),
       );
 
-      // Show success message
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              response['message'] ?? 'Reset email sent successfully!',
-            ),
-            backgroundColor: AppColors.successGreen,
-          ),
+        _showSuccessSnackBar(
+          response['message'] ?? 'Reset email sent successfully!',
         );
-
-        // Clear the email field
         _emailController.clear();
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to send reset email: ${e.toString()}'),
-            backgroundColor: AppColors.errorRed,
-          ),
-        );
-      }
+      _showErrorSnackBar('Failed to send reset email: ${e.toString()}');
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: AppColors.successGreen),
+    );
+  }
+
+  void _showErrorSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: AppColors.errorRed),
+      );
     }
   }
 
@@ -120,7 +107,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       'assets/images/forgot_password.png',
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
-                        // Fallback to custom illustration if image is not found
                         return Container(
                           width: 200,
                           height: 200,
@@ -237,18 +223,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   hintText: 'Enter your email address',
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: const Icon(Icons.email, color: AppColors.white),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email is required';
-                    }
-                    // Email validation regex
-                    if (!RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    ).hasMatch(value)) {
-                      return 'Please enter a valid email address';
-                    }
-                    return null;
-                  },
+                  validator: AuthValidators.validateEmail,
                 ),
 
                 const SizedBox(height: 26),

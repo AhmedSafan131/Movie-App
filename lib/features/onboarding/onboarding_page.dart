@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
 
-
 /// Data model for onboarding page content
 class OnboardingPageData {
   final String title;
@@ -52,7 +51,7 @@ class OnboardingPage extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.accentYellow.withValues(alpha:  0.3),
+                      AppColors.accentYellow.withValues(alpha: 0.3),
                       AppColors.primaryBlack,
                     ],
                   ),
@@ -126,7 +125,9 @@ class OnboardingPage extends StatelessWidget {
                           ),
                           child: Text(
                             data.primaryButtonText,
-                            style: AppStyles.semiBold16Black,
+                            style: AppStyles.semiBold16Black.copyWith(
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
@@ -150,7 +151,9 @@ class OnboardingPage extends StatelessWidget {
                           ),
                           child: Text(
                             "Back",
-                            style: AppStyles.semiBoldAccentYellow
+                            style: AppStyles.semiBoldAccentYellow.copyWith(
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
@@ -182,7 +185,7 @@ class OnboardingPage extends StatelessWidget {
                       Shadow(
                         offset: const Offset(0, 2),
                         blurRadius: 4,
-                        color: Colors.black.withValues(alpha:  0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                       ),
                     ],
                   ),
@@ -195,14 +198,14 @@ class OnboardingPage extends StatelessWidget {
                 Text(
                   data.description,
                   style: AppStyles.medium16White.copyWith(
-                    fontSize: 18,
+                    fontSize: 16,
                     height: 1.4,
                     color: AppColors.white,
                     shadows: [
                       Shadow(
                         offset: const Offset(0, 2),
                         blurRadius: 4,
-                        color: Colors.black.withValues(alpha:  0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                       ),
                     ],
                   ),
@@ -227,7 +230,7 @@ class OnboardingPage extends StatelessWidget {
                     ),
                     child: Text(
                       data.primaryButtonText,
-                      style: AppStyles.semiBold16Black,
+                      style: AppStyles.semiBold16Black.copyWith(fontSize: 16),
                     ),
                   ),
                 ),

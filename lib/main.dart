@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.dark,
-        initialRoute: AppRoutes.login,
+        initialRoute: AppRoutes.onboarding,
         routes: {
           AppRoutes.onboarding: (context) => const OnboardingScreen(),
           AppRoutes.login: (context) => const LoginScreen(),

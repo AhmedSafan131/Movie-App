@@ -6,6 +6,10 @@ import '../../utils/app_routes.dart';
 import '../../services/auth_service.dart';
 import '../../UI/widgets/custom_text_field.dart';
 import '../../UI/widgets/custom_button.dart';
+import '../../UI/widgets/auth/auth_header.dart';
+import '../../UI/widgets/auth/password_field.dart';
+import '../../UI/widgets/auth/avatar_selector.dart';
+import '../../utils/auth_validators.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -16,24 +20,89 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   int selectedAvatar = 0;
-
-  // Form controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-
-  // Form key for validation
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  // Loading state
   bool _isLoading = false;
 
-  // Password visibility states
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await AuthService.register(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        confirmPassword: _confirmPasswordController.text,
+        phone: _phoneController.text.trim(),
+        avatarId: selectedAvatar + 1,
+      );
+
+      if (mounted) {
+        _showSuccessSnackBar(response['message'] ?? 'Registration successful!');
+        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+      }
+    } catch (e) {
+      _showErrorSnackBar('Registration failed: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: AppColors.successGreen),
+    );
+  }
+
+  void _showErrorSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: AppColors.errorRed),
+      );
+    }
+  }
+
+  Color _getAvatarColor(int index) {
+    switch (index) {
+      case 0:
+        return Colors.green;
+      case 1:
+        return Colors.red;
+      case 2:
+        return Colors.orange;
+      case 3:
+        return Colors.blue;
+      case 4:
+        return Colors.purple;
+      case 5:
+        return Colors.pink;
+      case 6:
+        return Colors.teal;
+      case 7:
+        return Colors.indigo;
+      case 8:
+        return Colors.amber;
+      default:
+        return Colors.grey;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +131,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Center(
                         child: Text(
                           'Register',
-                          style:AppStyles.medium18Yellow,
+                          style: AppStyles.medium18Yellow,
                         ),
                       ),
                     ),
@@ -100,8 +169,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 });
                               },
                               child: Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
                                 width: isSelected ? 50 : 80,
                                 height: isSelected ? 50 : 80,
                                 decoration: BoxDecoration(
@@ -118,7 +188,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     'assets/images/avatar${index + 1}.png',
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      // Fallback to colored circle if image is not found
                                       return Container(
                                         decoration: BoxDecoration(
                                           color: _getAvatarColor(index),
@@ -139,10 +208,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        'Avatar',
-                        style:  AppStyles.medium16White,
-                      ),
+                      Text('Avatar', style: AppStyles.medium16White),
                     ],
                   ),
                 ),
@@ -154,12 +220,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _nameController,
                   hintText: 'Name',
                   prefixIcon: const Icon(Icons.person, color: AppColors.white),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Name is required';
-                    }
-                    return null;
-                  },
+                  validator: AuthValidators.validateName,
                 ),
 
                 const SizedBox(height: 16),
@@ -170,86 +231,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: 'Email',
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: const Icon(Icons.email, color: AppColors.white),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email is required';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
+                  validator: AuthValidators.validateEmail,
                 ),
 
                 const SizedBox(height: 16),
 
                 // Password Field
-                CustomTextField(
+                PasswordField(
                   controller: _passwordController,
                   hintText: 'Password',
-                  obscureText: !_isPasswordVisible,
-                  prefixIcon: const Icon(Icons.lock, color: AppColors.white),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: AppColors.white,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password is required';
-                    }
-                    if (value.length < 8) {
-                      return 'Password must be at least 8 characters';
-                    }
-                    // Check for strong password requirements
-                    if (!RegExp(
-                            r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]')
-                        .hasMatch(value)) {
-                      return 'Password must contain uppercase, lowercase, number, and special character';
-                    }
-                    return null;
-                  },
+                  validator: AuthValidators.validatePassword,
                 ),
 
                 const SizedBox(height: 16),
 
                 // Confirm Password Field
-                CustomTextField(
+                PasswordField(
                   controller: _confirmPasswordController,
                   hintText: 'Confirm Password',
-                  obscureText: !_isConfirmPasswordVisible,
-                  prefixIcon: const Icon(Icons.lock, color: AppColors.white),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
-                    icon: Icon(
-                      _isConfirmPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: AppColors.white,
-                    ),
+                  validator: (value) => AuthValidators.validateConfirmPassword(
+                    value,
+                    _passwordController.text,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Confirm password is required';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
                 ),
 
                 const SizedBox(height: 16),
@@ -264,7 +267,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Phone number is required';
                     }
-                    // Remove any non-digit characters for validation
                     final cleanPhone = value.replaceAll(RegExp(r'[^\d]'), '');
                     if (cleanPhone.length < 10) {
                       return 'Please enter a valid phone number';
@@ -288,7 +290,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      style:  AppStyles.medium14White,
+                      style: AppStyles.medium14White,
                       children: [
                         const TextSpan(text: 'Already Have Account ? '),
                         TextSpan(
@@ -314,98 +316,5 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _phoneController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _register() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // // Debug: Print the data being sent
-      // print('Registration data:');
-      // print('Name: ${_nameController.text.trim()}');
-      // print('Email: ${_emailController.text.trim()}');
-      // print('Password: ${_passwordController.text}');
-      // print('Confirm Password: ${_confirmPasswordController.text}');
-      // print('Phone: ${_phoneController.text.trim()}');
-      // print('Avatar ID: ${selectedAvatar + 1}');
-
-      final response = await AuthService.register(
-        name: _nameController.text.trim(),
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        confirmPassword: _confirmPasswordController.text,
-        phone: _phoneController.text.trim(),
-        avatarId: selectedAvatar + 1, // API expects 1-based index
-      );
-
-      // Show success message
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response['message'] ?? 'Registration successful!'),
-            backgroundColor: AppColors.successGreen,
-          ),
-        );
-
-        // Navigate to home screen
-        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Registration failed: ${e.toString()}'),
-            backgroundColor: AppColors.errorRed,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  Color _getAvatarColor(int index) {
-    switch (index) {
-      case 0:
-        return Colors.green;
-      case 1:
-        return Colors.red;
-      case 2:
-        return Colors.orange;
-      case 3:
-        return Colors.blue;
-      case 4:
-        return Colors.purple;
-      case 5:
-        return Colors.pink;
-      case 6:
-        return Colors.teal;
-      case 7:
-        return Colors.indigo;
-      case 8:
-        return Colors.amber;
-      default:
-        return Colors.grey;
-    }
   }
 }
