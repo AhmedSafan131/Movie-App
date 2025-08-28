@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/UI/Screen/home/tabs/profile_tab.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'tabs/Home Tab/home_tab.dart';
 import 'tabs/search_tab.dart';
 import 'tabs/details_tab.dart';
-import 'tabs/profile_tab.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
