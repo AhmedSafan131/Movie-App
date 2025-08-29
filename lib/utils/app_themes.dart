@@ -5,7 +5,7 @@ import 'package:movie_app/utils/app_styles.dart';
 class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     primaryColor: AppColors.white,
-    iconTheme: IconThemeData(color: AppColors.yellowColor),
+    iconTheme: const IconThemeData(color: AppColors.yellowColor),
 
     scaffoldBackgroundColor: AppColors.white,
     appBarTheme: const AppBarTheme(
@@ -20,7 +20,7 @@ class AppTheme {
       headlineLarge: AppStyles.medium20Black,
       bodyMedium: AppStyles.medium14White,
     ),
-    tabBarTheme: TabBarTheme(indicatorColor: AppColors.primaryBlack) 
+    tabBarTheme: const TabBarThemeData(indicatorColor: AppColors.primaryBlack) 
     // TabBarThemeData(indicatorColor: AppColors.primaryBlack),
   ); // TextTheme, ThemeData
 
@@ -39,7 +39,7 @@ class AppTheme {
       headlineLarge: AppStyles.medium20White,
       bodyMedium: AppStyles.medium14Black,
     ),
-    tabBarTheme: TabBarTheme(indicatorColor: AppColors.white) 
+    tabBarTheme: const TabBarThemeData(indicatorColor: AppColors.white) 
     // TabBarThemeData(indicatorColor: AppColors.white),
   ); // TextTheme, ThemeData
 }

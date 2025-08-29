@@ -1,12 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:movie_app/models/movies_response.dart';
 import 'package:movie_app/utils/app_colors.dart';
 
 class RecommendedItem extends StatelessWidget {
-  RecommendedItem({super.key, required this.movie});
-  Movies movie;
+  const RecommendedItem({super.key, required this.movie});
+  final Movies movie;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +26,7 @@ class RecommendedItem extends StatelessWidget {
         Container(
           width: width * 0.15,
           decoration: BoxDecoration(
-              color: AppColors.primaryBlack.withOpacity(0.7),
+              color: AppColors.primaryBlack,
               borderRadius: BorderRadius.circular(20)),
           padding: EdgeInsets.symmetric(
             horizontal: width * 0.02,
@@ -38,9 +36,9 @@ class RecommendedItem extends StatelessWidget {
           child: Row(children: [
             Text(
               '${movie.rating}',
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
-            Icon(
+            const Icon(
               Icons.star,
               color: AppColors.yellowColor,
               size: 16,

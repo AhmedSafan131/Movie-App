@@ -39,6 +39,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get or => 'OR';
 
   @override
+  String get search => 'Search';
+
+  @override
   String get login_with_google => 'Login With Google';
 
   @override

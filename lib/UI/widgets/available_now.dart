@@ -1,12 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_app/UI/Screen/home/tabs/Home%20Tab/recommended_item.dart';
+import 'package:movie_app/UI/Screen/home/tabs/home_tab/recommended_item.dart';
 import 'package:movie_app/models/movies_response.dart';
 import 'package:movie_app/utils/assets_manager.dart';
 
 class AvailableNow extends StatefulWidget {
-  AvailableNow({super.key, required this.movies});
-  List<Movies> movies;
+  const AvailableNow({super.key, required this.movies});
+final  List<Movies> movies;
   @override
   State<AvailableNow> createState() => _AvailableNowState();
 }
@@ -16,7 +16,7 @@ class _AvailableNowState extends State<AvailableNow> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
+   // var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
     image: DecorationImage(

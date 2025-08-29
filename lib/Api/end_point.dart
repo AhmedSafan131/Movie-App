@@ -1,4 +1,4 @@
 class EndPoint {
-  static const String movieListApi = '/api/v2/list_movies.json';
+  static const String movieApi = '/api/v2/list_movies.json';
 
 }
