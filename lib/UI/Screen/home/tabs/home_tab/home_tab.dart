@@ -55,8 +55,7 @@ class _HomeTabState extends State<HomeTab> {
               ],
             );
           } else if (state is HomeTabSuccessState) {
-            return SafeArea(
-                child: ListView(
+            return ListView(
               children: [
                 AvailableNow(movies: state.moviesList),
                 HomeGenresWidget(
@@ -112,7 +111,7 @@ class _HomeTabState extends State<HomeTab> {
                   movies: state.moviesList,
                 ),
               ],
-            ));
+            );
             //
           }
           return Container();

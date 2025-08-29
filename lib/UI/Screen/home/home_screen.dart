@@ -4,8 +4,7 @@ import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/assets_manager.dart';
 import 'tabs/home_tab/home_tab.dart';
 import 'tabs/search_tab/search_tab.dart';
-import 'tabs/details_tab.dart';
-
+import 'tabs/browse_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,14 +20,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryBlack,
+      extendBody: true, // Allow body to extend under bottom navigation bar
       body: _buildBody(),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(
+            left: 10.0, right: 10.0, bottom: 10.0, top: 10.0),
         child: Container(
           height: 58,
           decoration: BoxDecoration(
             color: AppColors.darkGray,
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black,
@@ -40,9 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(0,AssetsManager.homeIcon, 'Home'),
+              _buildNavItem(0, AssetsManager.homeIcon, 'Home'),
               _buildNavItem(1, AssetsManager.searchIcon, 'Search'),
-              _buildNavItem(2, AssetsManager.explorelIcon, 'Details'),
+              _buildNavItem(2, AssetsManager.explorelIcon, 'Browse'),
               _buildNavItem(3, AssetsManager.profielIcon, 'Profile'),
             ],
           ),
@@ -58,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return const SearchTab();
       case 2:
-        return const DetailsTab();
+        return const BrowseTab();
       case 3:
         return const ProfileTab();
       default:

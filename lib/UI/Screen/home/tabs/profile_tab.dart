@@ -56,7 +56,11 @@ class _ProfileTabState extends State<ProfileTab> {
 
           if (state is UserLoaded) {
             return Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -217,14 +221,14 @@ class _ProfileTabState extends State<ProfileTab> {
           currentPhone: user.phone,
           onProfileUpdated: (newName, newAvatar, newPhone) {
             context.read<UserBloc>().add(
-              UpdateUser(
-                user.copyWith(
-                  name: newName,
-                  avatar: newAvatar,
-                  phone: newPhone,
-                ),
-              ),
-            );
+                  UpdateUser(
+                    user.copyWith(
+                      name: newName,
+                      avatar: newAvatar,
+                      phone: newPhone,
+                    ),
+                  ),
+                );
           },
         ),
       ),
