@@ -36,10 +36,13 @@ class _SearchTabState extends State<SearchTab> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: width * 0.03, vertical: height * 0.01),
-      child: SafeArea(
+    return Transform.translate(
+      offset: const Offset(0, 60), // Move search field down by 60 pixels
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: width * 0.03,
+          right: width * 0.03,
+        ),
         child: Column(
           children: [
             CustomTextField(
