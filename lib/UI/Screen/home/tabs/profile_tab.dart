@@ -100,18 +100,18 @@ class _ProfileTabState extends State<ProfileTab> {
             Container(
               width: 80,
               height: 80,
-              decoration: BoxDecoration(shape: BoxShape.circle),
+              decoration: const BoxDecoration(shape: BoxShape.circle),
               child: ClipOval(
                 child: Image.asset(
                   user.avatar,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.accentYellow,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.person,
                         color: AppColors.primaryBlack,
                         size: 40,
@@ -382,11 +382,11 @@ class _ProfileTabState extends State<ProfileTab> {
                           width: 60,
                           height: 80,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [AppColors.accentYellow, AppColors.white],
-                              stops: const [0.0, 0.5],
+                              stops: [0.0, 0.5],
                             ),
                             borderRadius: BorderRadius.circular(8),
                           ),

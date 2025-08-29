@@ -59,7 +59,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
           style: AppStyles.medium16Yellow,
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.accentYellow),
+          icon: const Icon(Icons.arrow_back, color: AppColors.accentYellow),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -89,13 +89,13 @@ class _UpdateProfileState extends State<UpdateProfile> {
             SizedBox(height: height * 0.04),
             CustomTextField(
               controller: nameController,
-              prefixIcon: Icon(Icons.person, color: AppColors.white),
+              prefixIcon: const Icon(Icons.person, color: AppColors.white),
               hintText: 'Enter your name',
             ),
             SizedBox(height: height * 0.02),
             CustomTextField(
               controller: phoneController,
-              prefixIcon: Icon(Icons.phone, color: AppColors.white),
+              prefixIcon: const Icon(Icons.phone, color: AppColors.white),
               hintText: 'Enter your phone number',
             ),
             SizedBox(height: height * 0.032),
@@ -158,7 +158,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
     if (newName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please enter a valid name'),
           backgroundColor: AppColors.errorRed,
         ),
@@ -168,7 +168,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
     if (newPhone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please enter a valid phone number'),
           backgroundColor: AppColors.errorRed,
         ),
@@ -181,7 +181,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Profile updated successfully!'),
         backgroundColor: AppColors.successGreen,
       ),

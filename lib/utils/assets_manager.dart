@@ -1,6 +1,8 @@
 class AssetsManager {
   static const String basePath = "assets/images";
 
+  static const String emptyIcon = "$basePath/empty_icon.png";
+
   // Avatars
   static const String avatar1 = "$basePath/avatar1.png";
   static const String avatar2 = "$basePath/avatar2.png";
@@ -28,7 +30,12 @@ class AssetsManager {
   static const String splash = "$basePath/Splash.png";
 
   //homeTab
-   static const String avilableNow = "$basePath/Available Now.png";
-   static const String watchNow = "$basePath/Watch Now.png";
+  static const String avilableNow = "$basePath/Available Now.png";
+  static const String watchNow = "$basePath/Watch Now.png";
+  //icons
+    static const String profielIcon = "$basePath/Profiel.png";
+    static const String explorelIcon = "$basePath/explore.png";
+    static const String searchIcon = "$basePath/search_icon.png";
+    static const String homeIcon = "$basePath/home_icon.png";
+
 }
- 

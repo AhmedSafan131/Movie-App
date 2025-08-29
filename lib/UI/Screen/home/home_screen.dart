@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/utils/app_colors.dart';
-import 'tabs/Home Tab/home_tab.dart';
-import 'tabs/search_tab.dart';
+import 'package:movie_app/utils/assets_manager.dart';
+import 'tabs/home_tab/home_tab.dart';
+import 'tabs/search_tab/search_tab.dart';
 import 'tabs/details_tab.dart';
 import 'tabs/profile_tab.dart';
 
@@ -18,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       backgroundColor: AppColors.primaryBlack,
       body: _buildBody(),
       bottomNavigationBar: Padding(
@@ -28,21 +28,21 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
             color: AppColors.darkGray,
             borderRadius: BorderRadius.circular(25),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black,
                 blurRadius: 15,
-                offset: const Offset(0, 5),
+                offset: Offset(0, 5),
               ),
             ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(0, 'assets/images/home_icon.png', 'Home'),
-              _buildNavItem(1, 'assets/images/search_icon.png', 'Search'),
-              _buildNavItem(2, 'assets/images/explore.png', 'Details'),
-              _buildNavItem(3, 'assets/images/Profiel.png', 'Profile'),
+              _buildNavItem(0,AssetsManager.homeIcon, 'Home'),
+              _buildNavItem(1, AssetsManager.searchIcon, 'Search'),
+              _buildNavItem(2, AssetsManager.explorelIcon, 'Details'),
+              _buildNavItem(3, AssetsManager.profielIcon, 'Profile'),
             ],
           ),
         ),
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBody() {
     switch (_selectedIndex) {
       case 0:
-        return   HomeTab();
+        return const HomeTab();
       case 1:
         return const SearchTab();
       case 2:
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return const ProfileTab();
       default:
-        return  HomeTab();
+        return const HomeTab();
     }
   }
 
@@ -79,9 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
           iconPath,
           width: 24,
           height: 24,
-          color: isSelected
-              ? AppColors.accentYellow
-              : AppColors.white.withOpacity( 0.7),
+          color: isSelected ? AppColors.accentYellow : AppColors.white,
           errorBuilder: (context, error, stackTrace) {
             // Fallback to default icons if custom icons fail to load
             IconData fallbackIcon;
@@ -103,9 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             return Icon(
               fallbackIcon,
-              color: isSelected
-                  ? AppColors.accentYellow
-                  : AppColors.white.withOpacity( 0.7),
+              color: isSelected ? AppColors.accentYellow : AppColors.white,
               size: 24,
             );
           },

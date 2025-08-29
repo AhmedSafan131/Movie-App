@@ -47,17 +47,17 @@ class OnboardingPage extends StatelessWidget {
             errorBuilder: (context, error, stackTrace) {
               // Fallback placeholder if image is not found
               return Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.accentYellow.withOpacity( 0.3),
+                      AppColors.accentYellow,
                       AppColors.primaryBlack,
                     ],
                   ),
                 ),
-                child: Center(
+                child: const Center(
                   child: Icon(
                     Icons.movie,
                     size: 80,
@@ -179,10 +179,10 @@ class OnboardingPage extends StatelessWidget {
                     height: 1.2,
                     color: AppColors.white,
                     shadows: [
-                      Shadow(
-                        offset: const Offset(0, 2),
+                      const Shadow(
+                        offset: Offset(0, 2),
                         blurRadius: 4,
-                        color: Colors.black.withOpacity( 0.5),
+                        color: Colors.black,
                       ),
                     ],
                   ),
@@ -199,10 +199,10 @@ class OnboardingPage extends StatelessWidget {
                     height: 1.4,
                     color: AppColors.white,
                     shadows: [
-                      Shadow(
-                        offset: const Offset(0, 2),
+                      const Shadow(
+                        offset: Offset(0, 2),
                         blurRadius: 4,
-                        color: Colors.black.withOpacity( 0.5),
+                        color: Colors.black,
                       ),
                     ],
                   ),

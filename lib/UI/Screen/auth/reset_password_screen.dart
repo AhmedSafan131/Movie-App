@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/UI/widgets/custom_text_field.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
 import '../../widgets/custom_button.dart';
@@ -109,7 +110,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   children: [
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.arrow_back,
                         color: AppColors.accentYellow,
                         size: 24,
@@ -258,19 +259,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   text: 'Debug: Check Token',
                   onPressed: () async {
                     final token = await AuthService.getCurrentToken();
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Current token: ${token ?? 'NO TOKEN'}',
-                            style: AppStyles.medium16White,
-                          ),
-                          backgroundColor: token != null
-                              ? AppColors.successGreen
-                              : AppColors.errorRed,
+                    if (!mounted) return;
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Current token: ${token ?? 'NO TOKEN'}',
+                          style: AppStyles.medium16White,
                         ),
-                      );
-                    }
+                        backgroundColor: token != null
+                            ? AppColors.successGreen
+                            : AppColors.errorRed,
+                      ),
+                    );
                   },
                   backgroundColor: AppColors.accentYellow,
                   textColor: AppColors.primaryBlack,
@@ -285,17 +286,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     const testToken =
                         'eyJhbGciOiJIUzI1NilsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDFkMGFkODZIM2ZmZmIwM2IzO GEWOCIsImVtYWIsIjoiYW1yMjRAZ21haWwuY29tliwiaWF0ljoxNzMyMzY4MDQ1fQ.vhf0NB Qzj8EE9AinCX3ezu4yz1R8CNpt8xBawnTyMhw';
                     await AuthService.setTokenForTesting(testToken);
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Test token set successfully!',
-                            style: AppStyles.medium16White,
-                          ),
-                          backgroundColor: AppColors.successGreen,
+                    if (!mounted) return;
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Test token set successfully!',
+                          style: AppStyles.medium16White,
                         ),
-                      );
-                    }
+                        backgroundColor: AppColors.successGreen,
+                      ),
+                    );
                   },
                   backgroundColor: AppColors.primaryBlack,
                   textColor: AppColors.accentYellow,

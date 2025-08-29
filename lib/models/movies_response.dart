@@ -1,13 +1,15 @@
-
- 
-
 class MoviesResponse {
   String? status;
   String? statusMessage;
   Data? data;
   Meta? meta;
 
-  MoviesResponse({this.status, this.statusMessage, this.data, this.meta});
+  MoviesResponse({
+    this.status,
+    this.statusMessage,
+    this.data,
+    this.meta,
+  });
 
   MoviesResponse.fromJson(Map<String, dynamic> json) {
     status = json["status"];
@@ -16,21 +18,17 @@ class MoviesResponse {
     meta = json["@meta"] == null ? null : Meta.fromJson(json["@meta"]);
   }
 
-  static List<MoviesResponse> fromList(List<Map<String, dynamic>> list) {
-    return list.map(MoviesResponse.fromJson).toList();
+  Map<String, dynamic> toJson() {
+    return {
+      "status": status,
+      "status_message": statusMessage,
+      "data": data?.toJson(),
+      "@meta": meta?.toJson(),
+    };
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["status"] = status;
-    _data["status_message"] = statusMessage;
-    if(data != null) {
-      _data["data"] = data?.toJson();
-    }
-    if(meta != null) {
-      _data["@meta"] = meta?.toJson();
-    }
-    return _data;
+  static List<MoviesResponse> fromList(List<Map<String, dynamic>> list) {
+    return list.map((e) => MoviesResponse.fromJson(e)).toList();
   }
 }
 
@@ -40,26 +38,31 @@ class Meta {
   int? apiVersion;
   String? executionTime;
 
-  Meta({this.serverTime, this.serverTimezone, this.apiVersion, this.executionTime});
+  Meta({
+    this.serverTime,
+    this.serverTimezone,
+    this.apiVersion,
+    this.executionTime,
+  });
 
- Meta.fromJson(Map<String, dynamic> json) {
+  Meta.fromJson(Map<String, dynamic> json) {
     serverTime = json["server_time"];
     serverTimezone = json["server_timezone"];
     apiVersion = json["api_version"];
     executionTime = json["execution_time"];
   }
 
-  static List<Meta> fromList(List<Map<String, dynamic>> list) {
-    return list.map(Meta.fromJson).toList();
+  Map<String, dynamic> toJson() {
+    return {
+      "server_time": serverTime,
+      "server_timezone": serverTimezone,
+      "api_version": apiVersion,
+      "execution_time": executionTime,
+    };
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["server_time"] = serverTime;
-    _data["server_timezone"] = serverTimezone;
-    _data["api_version"] = apiVersion;
-    _data["execution_time"] = executionTime;
-    return _data;
+  static List<Meta> fromList(List<Map<String, dynamic>> list) {
+    return list.map((e) => Meta.fromJson(e)).toList();
   }
 }
 
@@ -69,28 +72,31 @@ class Data {
   int? pageNumber;
   List<Movies>? movies;
 
-  Data({this.movieCount, this.limit, this.pageNumber, this.movies});
+  Data({
+    this.movieCount,
+    this.limit,
+    this.pageNumber,
+    this.movies,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     movieCount = json["movie_count"];
     limit = json["limit"];
     pageNumber = json["page_number"];
-    movies = json["movies"] == null ? null : (json["movies"] as List).map((e) => Movies.fromJson(e)).toList();
-  }
-
-  static List<Data> fromList(List<Map<String, dynamic>> list) {
-    return list.map(Data.fromJson).toList();
+    movies = (json["movies"] as List?)?.map((e) => Movies.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["movie_count"] = movieCount;
-    _data["limit"] = limit;
-    _data["page_number"] = pageNumber;
-    if(movies != null) {
-      _data["movies"] = movies?.map((e) => e.toJson()).toList();
-    }
-    return _data;
+    return {
+      "movie_count": movieCount,
+      "limit": limit,
+      "page_number": pageNumber,
+      "movies": movies?.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  static List<Data> fromList(List<Map<String, dynamic>> list) {
+    return list.map((e) => Data.fromJson(e)).toList();
   }
 }
 
@@ -103,7 +109,7 @@ class Movies {
   String? titleLong;
   String? slug;
   int? year;
-  double? rating; // <-- Fix: use double, not Double
+  double? rating;
   int? runtime;
   List<String>? genres;
   String? summary;
@@ -152,7 +158,7 @@ class Movies {
   });
 
   Movies.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json["id"];
     url = json["url"];
     imdbCode = json["imdb_code"];
     title = json["title"];
@@ -160,10 +166,9 @@ class Movies {
     titleLong = json["title_long"];
     slug = json["slug"];
     year = json["year"];
-    // Fix: always parse as double
     rating = (json["rating"] as num?)?.toDouble();
     runtime = json["runtime"];
-    genres = json["genres"] == null ? null : List<String>.from(json["genres"]);
+    genres = (json["genres"] as List?)?.map((e) => e.toString()).toList() ?? [];
     summary = json["summary"];
     descriptionFull = json["description_full"];
     synopsis = json["synopsis"];
@@ -176,52 +181,45 @@ class Movies {
     mediumCoverImage = json["medium_cover_image"];
     largeCoverImage = json["large_cover_image"];
     state = json["state"];
-    torrents = json["torrents"] == null
-        ? null
-        : (json["torrents"] as List)
-            .map((e) => Torrents.fromJson(e))
-            .toList();
+    torrents =
+        (json["torrents"] as List?)?.map((e) => Torrents.fromJson(e)).toList();
     dateUploaded = json["date_uploaded"];
     dateUploadedUnix = json["date_uploaded_unix"];
   }
 
-  static List<Movies> fromList(List<Map<String, dynamic>> list) {
-    return list.map(Movies.fromJson).toList();
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "url": url,
+      "imdb_code": imdbCode,
+      "title": title,
+      "title_english": titleEnglish,
+      "title_long": titleLong,
+      "slug": slug,
+      "year": year,
+      "rating": rating,
+      "runtime": runtime,
+      "genres": genres,
+      "summary": summary,
+      "description_full": descriptionFull,
+      "synopsis": synopsis,
+      "yt_trailer_code": ytTrailerCode,
+      "language": language,
+      "mpa_rating": mpaRating,
+      "background_image": backgroundImage,
+      "background_image_original": backgroundImageOriginal,
+      "small_cover_image": smallCoverImage,
+      "medium_cover_image": mediumCoverImage,
+      "large_cover_image": largeCoverImage,
+      "state": state,
+      "torrents": torrents?.map((e) => e.toJson()).toList(),
+      "date_uploaded": dateUploaded,
+      "date_uploaded_unix": dateUploadedUnix,
+    };
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["id"] = id;
-    _data["url"] = url;
-    _data["imdb_code"] = imdbCode;
-    _data["title"] = title;
-    _data["title_english"] = titleEnglish;
-    _data["title_long"] = titleLong;
-    _data["slug"] = slug;
-    _data["year"] = year;
-    _data["rating"] = rating;
-    _data["runtime"] = runtime;
-    if(genres != null) {
-      _data["genres"] = genres;
-    }
-    _data["summary"] = summary;
-    _data["description_full"] = descriptionFull;
-    _data["synopsis"] = synopsis;
-    _data["yt_trailer_code"] = ytTrailerCode;
-    _data["language"] = language;
-    _data["mpa_rating"] = mpaRating;
-    _data["background_image"] = backgroundImage;
-    _data["background_image_original"] = backgroundImageOriginal;
-    _data["small_cover_image"] = smallCoverImage;
-    _data["medium_cover_image"] = mediumCoverImage;
-    _data["large_cover_image"] = largeCoverImage;
-    _data["state"] = state;
-    if(torrents != null) {
-      _data["torrents"] = torrents?.map((e) => e.toJson()).toList();
-    }
-    _data["date_uploaded"] = dateUploaded;
-    _data["date_uploaded_unix"] = dateUploadedUnix;
-    return _data;
+  static List<Movies> fromList(List<Map<String, dynamic>> list) {
+    return list.map((e) => Movies.fromJson(e)).toList();
   }
 }
 
@@ -231,9 +229,6 @@ class Torrents {
   String? quality;
   String? type;
   String? isRepack;
-  String? videoCodec;
-  String? bitDepth;
-  String? audioChannels;
   int? seeds;
   int? peers;
   String? size;
@@ -241,7 +236,19 @@ class Torrents {
   String? dateUploaded;
   int? dateUploadedUnix;
 
-  Torrents({this.url, this.hash, this.quality, this.type, this.isRepack, this.videoCodec, this.bitDepth, this.audioChannels, this.seeds, this.peers, this.size, this.sizeBytes, this.dateUploaded, this.dateUploadedUnix});
+  Torrents({
+    this.url,
+    this.hash,
+    this.quality,
+    this.type,
+    this.isRepack,
+    this.seeds,
+    this.peers,
+    this.size,
+    this.sizeBytes,
+    this.dateUploaded,
+    this.dateUploadedUnix,
+  });
 
   Torrents.fromJson(Map<String, dynamic> json) {
     url = json["url"];
@@ -249,9 +256,6 @@ class Torrents {
     quality = json["quality"];
     type = json["type"];
     isRepack = json["is_repack"];
-    videoCodec = json["video_codec"];
-    bitDepth = json["bit_depth"];
-    audioChannels = json["audio_channels"];
     seeds = json["seeds"];
     peers = json["peers"];
     size = json["size"];
@@ -260,26 +264,23 @@ class Torrents {
     dateUploadedUnix = json["date_uploaded_unix"];
   }
 
-  static List<Torrents> fromList(List<Map<String, dynamic>> list) {
-    return list.map(Torrents.fromJson).toList();
+  Map<String, dynamic> toJson() {
+    return {
+      "url": url,
+      "hash": hash,
+      "quality": quality,
+      "type": type,
+      "is_repack": isRepack,
+      "seeds": seeds,
+      "peers": peers,
+      "size": size,
+      "size_bytes": sizeBytes,
+      "date_uploaded": dateUploaded,
+      "date_uploaded_unix": dateUploadedUnix,
+    };
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["url"] = url;
-    _data["hash"] = hash;
-    _data["quality"] = quality;
-    _data["type"] = type;
-    _data["is_repack"] = isRepack;
-    _data["video_codec"] = videoCodec;
-    _data["bit_depth"] = bitDepth;
-    _data["audio_channels"] = audioChannels;
-    _data["seeds"] = seeds;
-    _data["peers"] = peers;
-    _data["size"] = size;
-    _data["size_bytes"] = sizeBytes;
-    _data["date_uploaded"] = dateUploaded;
-    _data["date_uploaded_unix"] = dateUploadedUnix;
-    return _data;
+  static List<Torrents> fromList(List<Map<String, dynamic>> list) {
+    return list.map((e) => Torrents.fromJson(e)).toList();
   }
 }

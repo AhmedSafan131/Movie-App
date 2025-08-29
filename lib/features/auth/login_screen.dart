@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       errorBuilder: (context, error, stackTrace) {
                         // Fallback to play button if image is not found
                         return Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: AppColors.accentYellow,
                             shape: BoxShape.circle,
                           ),
@@ -231,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const TextSpan(text: "Don't Have Account ? "),
                         TextSpan(
                           text: 'Create One',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.accentYellow,
                             fontWeight: FontWeight.w600,
                           ),

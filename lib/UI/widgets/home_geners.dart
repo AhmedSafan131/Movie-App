@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/UI/Screen/home/tabs/Home%20Tab/recommended_item.dart';
+import 'package:movie_app/UI/Screen/home/tabs/home_tab/recommended_item.dart';
 import 'package:movie_app/models/movies_response.dart';
 import 'package:movie_app/utils/app_colors.dart';
 
@@ -12,7 +12,7 @@ class HomeGenresWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    final filteredMovies = (genre != null && movies != null)
+    final filteredMovies = (movies != null)
         ? movies!
             .where((movie) => movie.genres?.contains(genre) ?? false)
             .toList()
@@ -26,14 +26,14 @@ class HomeGenresWidget extends StatelessWidget {
             children: [
               Text(genre, style: Theme.of(context).textTheme.headlineMedium),
               const Spacer(),
-              Text(
+              const Text(
                 'See More',
                 style: TextStyle(color: AppColors.yellowColor, fontSize: 16),
               ),
               SizedBox(
                 width: width * 0.02,
               ),
-              Icon(
+              const Icon(
                 Icons.arrow_forward,
                 color: AppColors.yellowColor,
                 size: 15,
@@ -54,7 +54,7 @@ class HomeGenresWidget extends StatelessWidget {
               },
               separatorBuilder: (context, index) =>
                   SizedBox(width: width * 0.03),
-              itemCount: filteredMovies.length ?? 0),
+              itemCount: filteredMovies.length),
         ),
       ],
     );

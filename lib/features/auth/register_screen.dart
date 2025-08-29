@@ -53,7 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.arrow_back,
                         color: AppColors.accentYellow,
                         size: 24,
@@ -294,7 +294,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const TextSpan(text: 'Already Have Account ? '),
                         TextSpan(
                           text: 'Login',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.accentYellow,
                             fontWeight: FontWeight.w600,
                           ),

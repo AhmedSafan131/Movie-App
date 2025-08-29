@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movie_app/Api/Api_manger.dart';
+import 'package:movie_app/Api/api_manger.dart';
 import 'package:movie_app/blocs/home_cubit/states.dart';
 
 class HomeTabCubit extends Cubit<HomeStates> {

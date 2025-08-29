@@ -6,14 +6,14 @@ class DetailsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: AppColors.primaryBlack,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.explore, color: AppColors.accentYellow, size: 80),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               'Details Tab',
               style: TextStyle(
@@ -22,11 +22,11 @@ class DetailsTab extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               'Explore movie details and more!',
               style: TextStyle(
-                color: AppColors.white.withOpacity(0.7),
+                color: AppColors.white,
                 fontSize: 16,
               ),
             ),

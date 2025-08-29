@@ -15,7 +15,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
 
   final List<OnboardingPageData> _pages = [
-    OnboardingPageData(
+    const OnboardingPageData(
       title: "Find Your Next Favorite Movie Here",
       description:
           "Get access to a huge library of movies to suit all tastes. You will surely like it.",
@@ -23,7 +23,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       showBackButton: false,
       primaryButtonText: "Explore Now",
     ),
-    OnboardingPageData(
+    const OnboardingPageData(
       title: "Discover Movies",
       description:
           "Explore a vast collection of movies in all qualities and genres. Find your next favorite film with ease.",
@@ -31,7 +31,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       showBackButton: true,
       primaryButtonText: "Next",
     ),
-    OnboardingPageData(
+    const OnboardingPageData(
       title: "Explore All Genres",
       description:
           "Discover movies from every genre, in all available qualities. Find something new and exciting to watch every day.",
@@ -39,7 +39,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       showBackButton: true,
       primaryButtonText: "Next",
     ),
-    OnboardingPageData(
+    const OnboardingPageData(
       title: "Create Watchlists",
       description:
           "Save movies to your watchlist to keep track of what you want to watch next. Enjoy films in various qualities and genres.",
@@ -47,7 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       showBackButton: true,
       primaryButtonText: "Next",
     ),
-    OnboardingPageData(
+    const OnboardingPageData(
       title: "Rate, Review, and Learn",
       description:
           "Share your thoughts on the movies you've watched. Dive deep into film details and help others discover great movies with your reviews.",
@@ -55,7 +55,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       showBackButton: true,
       primaryButtonText: "Next",
     ),
-    OnboardingPageData(
+    const OnboardingPageData(
       title: "Start Watching Now",
       description:
           "Ready to dive into the world of movies? Start your journey now and discover amazing films.",

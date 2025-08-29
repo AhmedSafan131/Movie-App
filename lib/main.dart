@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:movie_app/l10n/app_localizations.dart';
 import 'package:movie_app/utils/app_themes.dart';
 import 'utils/app_routes.dart';
-
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
@@ -18,6 +17,7 @@ import 'repositories/user_repository.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPreferences.getInstance(); // Initialize SharedPreferences
+
   runApp(const MyApp());
 }
 
@@ -37,13 +37,13 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Movies App',
         debugShowCheckedModeBanner: false,
-        locale: Locale('en'),
+        locale: const Locale('en'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.dark,
-        initialRoute: AppRoutes.home,
+        initialRoute: AppRoutes.login,
         routes: {
           AppRoutes.onboarding: (context) => const OnboardingScreen(),
           AppRoutes.login: (context) => const LoginScreen(),
