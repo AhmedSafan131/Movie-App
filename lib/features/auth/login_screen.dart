@@ -7,9 +7,12 @@ import '../../utils/app_routes.dart';
 import '../../services/auth_service.dart';
 import '../../UI/widgets/custom_text_field.dart';
 import '../../UI/widgets/custom_button.dart';
+
+
+
 import '../../blocs/user/user_bloc.dart';
 import '../../blocs/user/user_event.dart';
-import '../../blocs/user/user_state.dart';
+
 import '../../models/user_model.dart';
 import '../../repositories/user_repository.dart';
 
@@ -60,21 +63,19 @@ class _LoginScreenState extends State<LoginScreen> {
       final userRepository = UserRepository();
       final existingUser = await userRepository.loadUser();
 
-      UserModel user;
-      if (existingUser != null) {
-        // Preserve existing profile data, only update email from login
-        user = existingUser.copyWith(email: _emailController.text.trim());
-        print('Login: Preserving existing user data: $user');
-      } else {
-        // Create new user from login response
-        user = UserModel(
-          name: response['user']?['name'] ?? 'User',
-          phone: response['user']?['phone'] ?? '',
-          avatar: response['user']?['avatar'] ?? 'assets/images/avatar1.png',
-          email: _emailController.text.trim(),
-        );
-        print('Login: Creating new user from API response: $user');
-      }
+    UserModel user;
+    if (existingUser != null) {
+      user = existingUser.copyWith(email: _emailController.text.trim());
+     // print('Login: Preserving existing user data: $user');
+    } else {
+      user = UserModel(
+        name: response['user']?['name'] ?? 'User',
+        phone: response['user']?['phone'] ?? '',
+        avatar: response['user']?['avatar'] ?? 'assets/images/avatar1.png',
+        email: _emailController.text.trim(),
+      );
+      //print('Login: Creating new user from API response: $user');
+    }
 
       // Store user data using BLoC
       if (mounted) {

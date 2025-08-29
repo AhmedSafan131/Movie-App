@@ -5,7 +5,6 @@ import 'package:movie_app/UI/widgets/custom_text_field.dart';
 import 'package:movie_app/l10n/app_localizations.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
-import 'package:movie_app/utils/assets_manager.dart';
 import 'package:movie_app/utils/app_routes.dart';
 
 class UpdateProfile extends StatefulWidget {

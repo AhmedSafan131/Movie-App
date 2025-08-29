@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
-import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button.dart';
 import '../../../services/auth_service.dart';
 

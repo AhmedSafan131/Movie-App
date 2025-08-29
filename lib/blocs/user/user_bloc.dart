@@ -19,36 +19,36 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   Future<void> _onLoadUser(LoadUser event, Emitter<UserState> emit) async {
-    print('=== BLoC: Loading User ===');
+    //print('=== BLoC: Loading User ===');
     emit(const UserLoading());
     try {
       final user = await _userRepository.loadUser();
       if (user != null) {
-        print('BLoC: User loaded successfully: $user');
+       // print('BLoC: User loaded successfully: $user');
         emit(UserLoaded(user));
       } else {
-        print('BLoC: No user found, creating default user...');
+       // print('BLoC: No user found, creating default user...');
         // If no user data found, create default user
         final defaultUser = UserModel.defaultUser();
         await _userRepository.saveUser(defaultUser);
-        print('BLoC: Default user created and saved: $defaultUser');
+        //print('BLoC: Default user created and saved: $defaultUser');
         emit(UserLoaded(defaultUser));
       }
     } catch (e) {
-      print('BLoC: Error loading user: $e');
+      //('BLoC: Error loading user: $e');
       emit(UserError('Failed to load user: ${e.toString()}'));
     }
   }
 
   Future<void> _onUpdateUser(UpdateUser event, Emitter<UserState> emit) async {
-    print('=== BLoC: Updating User ===');
-    print('BLoC: Updating user: ${event.user}');
+    //('=== BLoC: Updating User ===');
+    //print('BLoC: Updating user: ${event.user}');
     try {
       await _userRepository.saveUser(event.user);
-      print('BLoC: User updated successfully');
+//print('BLoC: User updated successfully');
       emit(UserLoaded(event.user));
     } catch (e) {
-      print('BLoC: Error updating user: $e');
+      //print('BLoC: Error updating user: $e');
       emit(UserError('Failed to update user: ${e.toString()}'));
     }
   }

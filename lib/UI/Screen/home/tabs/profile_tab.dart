@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:movie_app/UI/widgets/custom_button.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
@@ -10,7 +9,6 @@ import 'package:movie_app/blocs/user/user_bloc.dart';
 import 'package:movie_app/blocs/user/user_event.dart';
 import 'package:movie_app/blocs/user/user_state.dart';
 import 'package:movie_app/models/user_model.dart';
-import 'package:movie_app/repositories/user_repository.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -147,7 +145,7 @@ class _ProfileTabState extends State<ProfileTab> {
                       Text(
                         'Wish List',
                         style: AppStyles.bold16White.copyWith(
-                          color: AppColors.white.withOpacity(0.7),
+                          color: AppColors.white,
                         ),
                       ),
                     ],
@@ -161,7 +159,7 @@ class _ProfileTabState extends State<ProfileTab> {
                       Text(
                         'History',
                         style: AppStyles.bold16White.copyWith(
-                          color: AppColors.white.withOpacity(0.7),
+                          color: AppColors.white,
                         ),
                       ),
                     ],
@@ -290,7 +288,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   Icons.list,
                   color: selectedTabIndex == 0
                       ? AppColors.accentYellow
-                      : AppColors.white.withOpacity(0.7),
+                      : AppColors.white,
                   size: 24,
                 ),
                 const SizedBox(height: 8),
@@ -299,7 +297,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   style: AppStyles.medium16White.copyWith(
                     color: selectedTabIndex == 0
                         ? AppColors.accentYellow
-                        : AppColors.white.withOpacity(0.7),
+                        : AppColors.white,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -327,7 +325,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   Icons.folder,
                   color: selectedTabIndex == 1
                       ? AppColors.accentYellow
-                      : AppColors.white.withOpacity(0.7),
+                      : AppColors.white,
                   size: 24,
                 ),
                 const SizedBox(height: 8),
@@ -336,7 +334,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   style: AppStyles.medium16White.copyWith(
                     color: selectedTabIndex == 1
                         ? AppColors.accentYellow
-                        : AppColors.white.withOpacity(0.7),
+                        : AppColors.white,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -371,7 +369,7 @@ class _ProfileTabState extends State<ProfileTab> {
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
                 // Fallback to custom illustration if image is not found
-                return Container(
+                return SizedBox(
                   width: 120,
                   height: 120,
                   child: Stack(
@@ -505,7 +503,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 ? 'No movies in your watch list'
                 : 'No movies in your history',
             style: AppStyles.medium16White.copyWith(
-              color: AppColors.white.withOpacity(0.7),
+              color: AppColors.white,
             ),
             textAlign: TextAlign.center,
           ),
