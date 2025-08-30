@@ -31,4 +31,28 @@ class ApiManger {
       rethrow;
     }
   }
+  static Future<Movies?> getMovieDetails(int movieId) async {
+    Uri url = Uri.https(ApiConstants.moveisBaseUrl, EndPoint.movieDetailsApi,
+        {'movie_id': movieId.toString()});
+    try {
+      var response = await http.get(url);
+      var json = jsonDecode(response.body);
+      return Movies.fromJson(json['data']['movie']);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<List<Movies>> getMovieSuggestions(int movieId) async {
+    Uri url = Uri.https(ApiConstants.moveisBaseUrl, EndPoint.movieSuggestionsApi,
+        {'movie_id': movieId.toString()});
+    try {
+      var response = await http.get(url);
+      var json = jsonDecode(response.body);
+      List list = json['data']['movies'] ?? [];
+      return list.map((e) => Movies.fromJson(e)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

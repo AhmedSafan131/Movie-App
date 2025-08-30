@@ -37,5 +37,8 @@ class AssetsManager {
     static const String explorelIcon = "$basePath/explore.png";
     static const String searchIcon = "$basePath/search_icon.png";
     static const String homeIcon = "$basePath/home_icon.png";
+  static const String playIcon = "assets/images/play.png";
+
+
 
 }
