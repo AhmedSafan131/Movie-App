@@ -127,6 +127,10 @@ class Movies {
   List<Torrents>? torrents;
   String? dateUploaded;
   int? dateUploadedUnix;
+  // Added new properties for enhanced functionality
+  List<Cast>? cast;
+  int? likeCount;
+  int? downloadCount;
 
   Movies({
     this.id,
@@ -155,6 +159,9 @@ class Movies {
     this.torrents,
     this.dateUploaded,
     this.dateUploadedUnix,
+    this.cast,
+    this.likeCount,
+    this.downloadCount,
   });
 
   Movies.fromJson(Map<String, dynamic> json) {
@@ -181,10 +188,16 @@ class Movies {
     mediumCoverImage = json["medium_cover_image"];
     largeCoverImage = json["large_cover_image"];
     state = json["state"];
-    torrents =
-        (json["torrents"] as List?)?.map((e) => Torrents.fromJson(e)).toList();
+    torrents = (json["torrents"] as List?)?.map((e) => Torrents.fromJson(e)).toList();
     dateUploaded = json["date_uploaded"];
     dateUploadedUnix = json["date_uploaded_unix"];
+
+    // Parse cast data if available
+    cast = (json["cast"] as List?)?.map((e) => Cast.fromJson(e)).toList();
+
+    // Parse like count and download count if available
+    likeCount = json["like_count"];
+    downloadCount = json["download_count"];
   }
 
   Map<String, dynamic> toJson() {
@@ -215,11 +228,48 @@ class Movies {
       "torrents": torrents?.map((e) => e.toJson()).toList(),
       "date_uploaded": dateUploaded,
       "date_uploaded_unix": dateUploadedUnix,
+      "cast": cast?.map((e) => e.toJson()).toList(),
+      "like_count": likeCount,
+      "download_count": downloadCount,
     };
   }
 
   static List<Movies> fromList(List<Map<String, dynamic>> list) {
     return list.map((e) => Movies.fromJson(e)).toList();
+  }
+}
+
+class Cast {
+  String? name;
+  String? characterName;
+  String? urlSmallImage;
+  String? imdbCode;
+
+  Cast({
+    this.name,
+    this.characterName,
+    this.urlSmallImage,
+    this.imdbCode,
+  });
+
+  Cast.fromJson(Map<String, dynamic> json) {
+    name = json["name"];
+    characterName = json["character_name"];
+    urlSmallImage = json["url_small_image"];
+    imdbCode = json["imdb_code"];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name,
+      "character_name": characterName,
+      "url_small_image": urlSmallImage,
+      "imdb_code": imdbCode,
+    };
+  }
+
+  static List<Cast> fromList(List<Map<String, dynamic>> list) {
+    return list.map((e) => Cast.fromJson(e)).toList();
   }
 }
 

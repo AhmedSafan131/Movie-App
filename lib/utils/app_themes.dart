@@ -20,7 +20,8 @@ class AppTheme {
       headlineLarge: AppStyles.medium20Black,
       bodyMedium: AppStyles.medium14White,
     ),
-    tabBarTheme: const TabBarThemeData(indicatorColor: AppColors.primaryBlack) 
+    // tabBarTheme: const TabBarTheme(indicatorColor: AppColors.primaryBlack)
+      tabBarTheme: const TabBarThemeData(indicatorColor: AppColors.primaryBlack)
     // TabBarThemeData(indicatorColor: AppColors.primaryBlack),
   ); // TextTheme, ThemeData
 
@@ -39,7 +40,8 @@ class AppTheme {
       headlineLarge: AppStyles.medium20White,
       bodyMedium: AppStyles.medium14Black,
     ),
-    tabBarTheme: const TabBarThemeData(indicatorColor: AppColors.white) 
+    // tabBarTheme: const TabBarTheme(indicatorColor: AppColors.white)
+      tabBarTheme: const TabBarThemeData(indicatorColor: AppColors.white)
     // TabBarThemeData(indicatorColor: AppColors.white),
   ); // TextTheme, ThemeData
 }

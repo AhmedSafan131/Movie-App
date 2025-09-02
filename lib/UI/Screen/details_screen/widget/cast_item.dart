@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/utils/app_styles.dart';
+import 'package:movie_app/utils/app_colors.dart';
 
 class CastItem extends StatelessWidget {
   final String imageUrl;
@@ -34,24 +35,33 @@ class CastItem extends StatelessWidget {
                 return Container(
                   width: double.infinity,
                   height: width * 0.3,
-                  color: Colors.grey[800],
-                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                  decoration: BoxDecoration(
+                    color: AppColors.darkGray,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.grey,
+                    size: width * 0.1,
+                  ),
                 );
               },
             ),
           ),
-           SizedBox(height:height*0.02 ),
+          SizedBox(height: height * 0.015),
           Text(
-            'Name:$actorName',
-            style: AppStyles.medium16White,
+            'Name: $actorName',
+            style: AppStyles.medium14White,
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
-            'Character:$characterName',
-            style: AppStyles.medium16White,
+            'Character: $characterName',
+            style: AppStyles.medium14White.copyWith(
+              color: AppColors.lightGray,
+            ),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

@@ -11,11 +11,10 @@ import 'package:movie_app/utils/assets_manager.dart';
 
 import '../../../models/movies_response.dart';
 
-
 class MovieDetailsPage extends StatefulWidget {
-   Movies movie;
+  Movies movie;
 
-   MovieDetailsPage({super.key, required this.movie});
+  MovieDetailsPage({super.key, required this.movie});
 
   @override
   State<MovieDetailsPage> createState() => _MovieDetailsPageState();
@@ -24,7 +23,10 @@ class MovieDetailsPage extends StatefulWidget {
 class _MovieDetailsPageState extends State<MovieDetailsPage> {
   Movies? movie;
   List<Movies> suggestions = [];
+  List<Cast> castMembers = [];
   bool isLoading = true;
+  int likeCount = 0;
+  bool isLiked = false;
 
   @override
   void initState() {
@@ -33,29 +35,42 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   }
 
   Future<void> _loadMovieData() async {
-    final movieDetails = await ApiManger.getMovieDetails(widget.movie.id!);
+    final movieDetails = await ApiManger.getMovieDetailsWithCast(widget.movie.id!);
     final movieSuggestions = await ApiManger.getMovieSuggestions(widget.movie.id!);
 
     setState(() {
       movie = movieDetails;
       suggestions = movieSuggestions;
+      castMembers = movieDetails?.cast ?? [];
+      likeCount = movieDetails?.likeCount ??
+          movieDetails?.downloadCount ??
+          (movieDetails?.rating != null ? (movieDetails!.rating! * 100).toInt() : 150);
       isLoading = false;
+    });
+  }
+
+  void _toggleLike() {
+    setState(() {
+      if (isLiked) {
+        likeCount--;
+      } else {
+        likeCount++;
+      }
+      isLiked = !isLiked;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     var height = MediaQuery.of(context).size.height;
-     var width = MediaQuery.of(context).size.width;
+    var width = MediaQuery.of(context).size.width;
+
     if (isLoading) {
       return const Scaffold(
         backgroundColor: Colors.black,
         body: Center(child: CircularProgressIndicator(color: AppColors.accentYellow)),
       );
     }
-
-
 
     return Scaffold(
       backgroundColor: AppColors.primaryBlack,
@@ -69,9 +84,29 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 children: [
                   Image.network(
                     movie!.largeCoverImage ?? "",
-                    height: height*0.6,
+                    height: height * 0.6,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                  ),
+                  // Back Arrow
+                  Positioned(
+                    top: 16,
+                    left: 16,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_ios_new_outlined,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                    ),
                   ),
                   Column(
                     children: [
@@ -82,13 +117,14 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                         ),
                       ),
                       SizedBox(
-                        height: height*0.15,
+                        height: height * 0.15,
                       ),
                       Padding(
-                        padding:  EdgeInsets.only(bottom: height*0.02),
+                        padding: EdgeInsets.only(bottom: height * 0.02),
                         child: Text(
                           movie!.title ?? "",
                           style: AppStyles.bold24White,
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ],
@@ -96,22 +132,19 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 ],
               ),
 
-
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-
                   Text(
                     "${movie!.year} ",
                     style: AppStyles.bold20LightGrey,
                   ),
                   Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: width*0.03,vertical: height*0.02),
+                    padding: EdgeInsets.symmetric(horizontal: width * 0.03, vertical: height * 0.02),
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        minimumSize:  Size(double.infinity, height*0.07),
-
+                        minimumSize: Size(double.infinity, height * 0.07),
                         backgroundColor: AppColors.red,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
@@ -126,30 +159,51 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-
-                      IconText(
-                        icon: Icons.favorite,
-                        text: "${movie!.id}",
+                      // Like Button with dynamic count from API
+                      GestureDetector(
+                        onTap: _toggleLike,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: width * 0.01),
+                          padding: EdgeInsets.symmetric(horizontal: width * 0.03, vertical: height * 0.012),
+                          decoration: BoxDecoration(
+                              color: AppColors.darkGray,
+                              borderRadius: BorderRadius.circular(16)
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                  isLiked ? Icons.favorite : Icons.favorite_border,
+                                  color: isLiked ? AppColors.accentYellow : AppColors.accentYellow,
+                                  size: 22
+                              ),
+                              SizedBox(width: width * 0.015),
+                              Text(
+                                  _formatNumber(likeCount),
+                                  style: AppStyles.bold20White.copyWith(fontSize: 16)
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       IconText(
                         icon: Icons.access_time,
-                        text: "${movie!.runtime} min",
+                        text: "${movie!.runtime ?? 'N/A'} min",
                       ),
                       IconText(
                         icon: Icons.star,
-                        text: "${movie!.rating}",
+                        text: "${movie!.rating ?? 'N/A'}",
                       ),
                     ],
                   ),
                 ],
               ),
 
-               SizedBox(height: height*0.04),
+              SizedBox(height: height * 0.04),
               SectionTitle(title: "Screen Shots"),
               SizedBox(
                 height: height * 0.74,
                 child: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: width*0.02,vertical: height*0.02),
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.02, vertical: height * 0.02),
                   child: Column(
                     children: [
                       ClipRRect(
@@ -161,7 +215,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                           height: height * 0.22,
                         ),
                       ),
-                       SizedBox(height: height*0.023),
+                      SizedBox(height: height * 0.023),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.network(
@@ -171,7 +225,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                           height: height * 0.22,
                         ),
                       ),
-                       SizedBox(height: height*0.017),
+                      SizedBox(height: height * 0.017),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Image.network(
@@ -185,8 +239,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   ),
                 ),
               ),
-
-
 
               SectionTitle(title: "Similar"),
               SizedBox(
@@ -203,17 +255,17 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   itemCount: suggestions.length,
                   itemBuilder: (context, index) {
                     final movie = suggestions[index];
-                    return SimilarMovieCard(imageUrl: movie.mediumCoverImage ?? '',text: movie.rating.toString(),);
+                    return SimilarMovieCard(
+                      imageUrl: movie.mediumCoverImage ?? '',
+                      text: movie.rating.toString(),
+                    );
                   },
                 ),
-
               ),
 
+              SizedBox(height: height * 0.005),
 
-               SizedBox(height: height*0.005),
-
-
-              SectionTitle(title :"Summary"),
+              SectionTitle(title: "Summary"),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: width * 0.02),
                 child: Text(
@@ -224,13 +276,99 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 ),
               ),
 
+              SizedBox(height: height * 0.03),
 
-
-
+              // Cast Section - Updated design similar to the image
               SectionTitle(title: "Cast"),
+              if (castMembers.isNotEmpty) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+                  child: Column(
+                    children: castMembers.map((castMember) {
+                      return Container(
+                        margin: EdgeInsets.only(bottom: height * 0.015),
+                        padding: EdgeInsets.all(width * 0.03),
+                        decoration: BoxDecoration(
+                          color: AppColors.darkGray.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            // Actor Image
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                castMember.urlSmallImage ?? '',
+                                width: width * 0.15,
+                                height: width * 0.15,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: width * 0.15,
+                                    height: width * 0.15,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.darkGray,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Colors.grey,
+                                      size: width * 0.08,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(width: width * 0.04),
+                            // Actor Info
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Name : ${castMember.name ?? 'Unknown Actor'}",
+                                    style: AppStyles.bold16White,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: height * 0.005),
+                                  Text(
+                                    "Character : ${castMember.characterName ?? 'Unknown Character'}",
+                                    style: AppStyles.medium14White.copyWith(
+                                      color: AppColors.lightGray,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ] else ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+                  child: Container(
+                    height: height * 0.1,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColors.darkGray.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      "Cast information not available for this movie",
+                      style: AppStyles.medium16White.copyWith(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
 
-
-
+              SizedBox(height: height * 0.03),
 
               SectionTitle(title: "Genres"),
               Padding(
@@ -242,8 +380,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 ),
               ),
 
-
-
+              SizedBox(height: height * 0.03),
             ],
           ),
         ),
@@ -251,10 +388,13 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
     );
   }
 
-
-
-
-
-
-
+  // Helper method to format large numbers (like 1.5K, 10.2K, etc.)
+  String _formatNumber(int number) {
+    if (number >= 1000000) {
+      return '${(number / 1000000).toStringAsFixed(1)}M';
+    } else if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(1)}K';
+    }
+    return number.toString();
+  }
 }
