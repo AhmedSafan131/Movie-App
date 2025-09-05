@@ -42,7 +42,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search';
 
   @override
+  String get register => 'Register';
+
+  @override
   String get login_with_google => 'Login With Google';
+
+  @override
+  String get wish_list => 'Wish List';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get edit_profile => 'Edit Profile';
+
+  @override
+  String get exit => 'Exit';
+
+  @override
+  String get watch_list => 'Watch List ';
 
   @override
   String get reset_password => 'Reset Password';

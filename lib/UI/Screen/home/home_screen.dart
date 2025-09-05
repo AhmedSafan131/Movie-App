@@ -4,7 +4,7 @@ import 'package:movie_app/utils/assets_manager.dart';
 import 'tabs/home_tab/home_tab.dart';
 import 'tabs/search_tab/search_tab.dart';
 import 'tabs/details_tab.dart';
-import 'tabs/profile_tab.dart';
+import 'tabs/profile_tab/profile_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,8 +18,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+   var height= MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: AppColors.primaryBlack,
+      appBar: AppBar(
+        toolbarHeight:height*0.001
+      ),
       body: _buildBody(),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),

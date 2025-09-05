@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movie_app/UI/Screen/home/tabs/search_tab/search_movie.dart';
+import 'package:movie_app/UI/Screen/home/tabs/search_tab/search_movie_item.dart';
 import 'package:movie_app/UI/widgets/custom_text_field.dart';
 import 'package:movie_app/UI/widgets/reconnect_widget.dart';
 import 'package:movie_app/blocs/search_cubit/search_state.dart';
@@ -71,7 +71,7 @@ class _SearchTabState extends State<SearchTab> {
                       ? Center(
                           child: Image.asset(AssetsManager.emptyIcon),
                         )
-                      : SearchMovie(
+                      : SearchMovieItem(
                           searchMoviesList: state.movies,
                           movieOnClick: () {
                             FocusScope.of(context).unfocus();

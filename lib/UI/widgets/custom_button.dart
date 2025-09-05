@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/utils/app_colors.dart';
+import 'package:movie_app/utils/app_styles.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -12,20 +13,21 @@ class CustomButton extends StatelessWidget {
   final Color textColor;
   final double borderRadius;
   final Widget? icon;
+  final bool leftIconDirection;
 
-  const CustomButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-    this.isOutlined = false,
-    this.width,
-    this.height = 50,
-    this.backgroundColor = AppColors.yellowColor,
-    this.textColor = AppColors.primaryBlack,
-    this.borderRadius = 12,
-    this.icon,
-  });
+  const CustomButton(
+      {super.key,
+      required this.text,
+      required this.onPressed,
+      this.isLoading = false,
+      this.isOutlined = false,
+      this.width,
+      this.height = 50,
+      this.backgroundColor = AppColors.yellowColor,
+      this.textColor = AppColors.primaryBlack,
+      this.borderRadius = 12,
+      this.icon,
+      this.leftIconDirection = true});
 
   @override
   Widget build(BuildContext context) {
@@ -79,30 +81,34 @@ class CustomButton extends StatelessWidget {
     }
 
     if (icon != null) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          icon!,
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      );
+      return leftIconDirection
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                icon!,
+                const SizedBox(width: 8),
+                Text(
+                  text,
+                  style: AppStyles.medium16White.copyWith(color: textColor),
+                ),
+              ],
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  text,
+                  style: AppStyles.medium16White.copyWith(color: textColor),
+                ),
+                const SizedBox(width: 8),
+                icon!,
+              ],
+            );
     }
 
     return Text(
       text,
-      style: TextStyle(
-        color: textColor,
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
+      style: AppStyles.medium16White.copyWith(color: textColor),
     );
   }
 }

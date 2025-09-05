@@ -10,7 +10,13 @@
   "create_one": "Create One",
   "or": "OR",
   "search": "Search",
+  "register": "Register",
   "login_with_google": "Login With Google",
+  "wish_list": "Wish List",
+  "history": "History",
+  "edit_profile": "Edit Profile",
+  "exit": "Exit",
+  "watch_list": "Watch List ",
   "reset_password": "Reset Password"
   
 

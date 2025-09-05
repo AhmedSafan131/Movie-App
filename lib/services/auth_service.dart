@@ -50,7 +50,7 @@ class AuthService {
     required String password,
     required String confirmPassword,
     required String phone,
-    required int avatarId,
+    required String avatarId,
   }) async {
     try {
       final requestBody = {

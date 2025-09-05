@@ -1,67 +1,58 @@
-import 'package:equatable/equatable.dart';
+import 'package:movie_app/models/movies_response.dart';
 
-class UserModel extends Equatable {
+class UserModel {
+  final String id;
   final String name;
+  final String email;
   final String phone;
-  final String avatar;
-  final String? email;
+  final int avatarId;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  List<Movies> favorites;
 
-  const UserModel({
+  UserModel({
+    required this.id,
     required this.name,
+    required this.email,
     required this.phone,
-    required this.avatar,
-    this.email,
+    required this.avatarId,
+    this.createdAt,
+    this.updatedAt,
+    this.favorites = const [],
   });
 
-  // Create from JSON
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  // إنشاء User من JSON
+  factory UserModel.fromJson(Map<String, dynamic> json, {String? token}) {
+    List<Movies> favs = [];
+    if (json['favorites'] != null) {
+      favs =
+          List<Movies>.from(json['favorites'].map((x) => Movies.fromJson(x)));
+    }
+
     return UserModel(
+      id: json['_id'] ?? '',
       name: json['name'] ?? '',
+      email: json['email'] ?? '',
       phone: json['phone'] ?? '',
-      avatar: json['avatar'] ?? '',
-      email: json['email'],
+      avatarId: int.tryParse(json['avaterId'].toString()) ?? 0, 
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      favorites: favs,
     );
   }
 
-  // Convert to JSON
   Map<String, dynamic> toJson() {
     return {
+      '_id': id,
       'name': name,
+      'email': email,
       'phone': phone,
-      'avatar': avatar,
-      if (email != null) 'email': email,
+      'avatarId': avatarId,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'favorites': favorites.map((x) => x.toJson()).toList(),
     };
-  }
-
-  // Create a copy with updated fields
-  UserModel copyWith({
-    String? name,
-    String? phone,
-    String? avatar,
-    String? email,
-  }) {
-    return UserModel(
-      name: name ?? this.name,
-      phone: phone ?? this.phone,
-      avatar: avatar ?? this.avatar,
-      email: email ?? this.email,
-    );
-  }
-
-  // Create default user
-  factory UserModel.defaultUser() {
-    return const UserModel(
-      name: 'User',
-      phone: '',
-      avatar: 'assets/images/avatar1.png',
-    );
-  }
-
-  @override
-  List<Object?> get props => [name, phone, avatar, email];
-
-  @override
-  String toString() {
-    return 'UserModel(name: $name, phone: $phone, avatar: $avatar, email: $email)';
   }
 }

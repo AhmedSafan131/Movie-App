@@ -3,7 +3,7 @@ import 'package:movie_app/utils/assets_manager.dart';
 import 'package:movie_app/UI/widgets/avatar_item.dart';
 
 class BottomSheetWidget extends StatelessWidget {
-  final Function(String) avaterClick;
+  final Function(int) avaterClick;
   const BottomSheetWidget({super.key, required this.avaterClick});
 
   static const List<String> avatar = [
@@ -38,9 +38,9 @@ class BottomSheetWidget extends StatelessWidget {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
-              avaterClick(avatar[index]);
+              avaterClick(index);
             },
-            child: AvatarItem(width: width, avatar: avatar, index: index),
+            child: AvatarItem(size: width * 0.05, avatar: avatar, index: index),
           );
         },
         itemCount: avatar.length,

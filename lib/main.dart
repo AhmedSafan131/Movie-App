@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_app/UI/Screen/auto_login/auth_gate.dart';
+import 'package:movie_app/UI/Screen/profile/update_profile.dart';
+import 'package:movie_app/blocs/auth_cubit/login/login_view_model.dart';
+import 'package:movie_app/blocs/auth_cubit/register/register_view_model.dart';
+import 'package:movie_app/utils/my_bloc_observer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:movie_app/l10n/app_localizations.dart';
 import 'package:movie_app/utils/app_themes.dart';
 import 'utils/app_routes.dart';
 import 'features/onboarding/onboarding_screen.dart';
-import 'features/auth/login_screen.dart';
-import 'features/auth/register_screen.dart';
-import 'features/auth/forget_password_screen.dart';
+import 'UI/Screen/auth/login_screen.dart';
+import 'UI/Screen/auth/register_screen.dart';
+import 'UI/Screen/auth/forget_password_screen.dart';
 import 'UI/Screen/home/home_screen.dart';
 import 'UI/Screen/auth/reset_password_screen.dart';
-import 'blocs/user/user_bloc.dart';
-import 'blocs/user/user_event.dart';
-import 'repositories/user_repository.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPreferences.getInstance(); // Initialize SharedPreferences
-
+  Bloc.observer = MyBlocObserver();
   runApp(const MyApp());
 }
 
@@ -29,9 +32,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<UserBloc>(
-          create: (context) =>
-              UserBloc(userRepository: UserRepository())..add(const LoadUser()),
+        BlocProvider<RegisterViewModel>(
+          create: (context) => RegisterViewModel(),
+        ),
+        BlocProvider<LoginViewModel>(
+          create: (context) => LoginViewModel(),
         ),
       ],
       child: MaterialApp(
@@ -43,14 +48,16 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.dark,
-        initialRoute: AppRoutes.login,
+        initialRoute: AppRoutes.authGate,
         routes: {
           AppRoutes.onboarding: (context) => const OnboardingScreen(),
           AppRoutes.login: (context) => const LoginScreen(),
-          AppRoutes.register: (context) => const RegisterScreen(),
+          AppRoutes.register: (context) =>  const RegisterScreen(),
           AppRoutes.forgetPassword: (context) => const ForgetPasswordScreen(),
           AppRoutes.resetPassword: (context) => const ResetPasswordScreen(),
           AppRoutes.home: (context) => const HomeScreen(),
+          AppRoutes.authGate: (context) => const AuthGate(),
+          AppRoutes.editProfile: (context) => const UpdateProfile(),
         },
       ),
     );
