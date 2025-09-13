@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/Api/Api_manger.dart';
-import 'package:movie_app/UI/Screen/details_screen/widget/cast_item.dart';
 import 'package:movie_app/UI/Screen/details_screen/widget/genres_item.dart';
 import 'package:movie_app/UI/Screen/details_screen/widget/icon_text.dart';
 import 'package:movie_app/UI/Screen/details_screen/widget/movie_card.dart';
@@ -8,7 +7,7 @@ import 'package:movie_app/UI/Screen/details_screen/widget/section_title.dart';
 import 'package:movie_app/utils/app_colors.dart';
 import 'package:movie_app/utils/app_styles.dart';
 import 'package:movie_app/utils/assets_manager.dart';
-
+import 'package:movie_app/repositories/watchlist_repository.dart';
 import '../../../models/movies_response.dart';
 
 class MovieDetailsPage extends StatefulWidget {
@@ -27,11 +26,14 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   bool isLoading = true;
   int likeCount = 0;
   bool isLiked = false;
+  bool isBookmarked = false;
+  final WatchlistRepository _watchlistRepository = WatchlistRepository();
 
   @override
   void initState() {
     super.initState();
     _loadMovieData();
+    _checkIfBookmarked();
   }
 
   Future<void> _loadMovieData() async {
@@ -49,6 +51,13 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
     });
   }
 
+  Future<void> _checkIfBookmarked() async {
+    final bookmarked = await _watchlistRepository.isMovieInWatchlist(widget.movie.id!);
+    setState(() {
+      isBookmarked = bookmarked;
+    });
+  }
+
   void _toggleLike() {
     setState(() {
       if (isLiked) {
@@ -58,6 +67,21 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
       }
       isLiked = !isLiked;
     });
+  }
+
+  Future<void> _toggleBookmark() async {
+    try {
+      if (isBookmarked) {
+        await _watchlistRepository.removeFromWatchlist(widget.movie.id!);
+      } else {
+        await _watchlistRepository.addToWatchlist(widget.movie);
+      }
+      setState(() {
+        isBookmarked = !isBookmarked;
+      });
+    } catch (e) {
+      // Handle error silently
+    }
   }
 
   @override
@@ -88,26 +112,33 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  // Back Arrow
+
                   Positioned(
-                    top: 16,
+                    top: 20,
                     left: 16,
                     child: GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new_outlined,
-                          color: Colors.white,
-                          size: 24,
-                        ),
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_outlined,
+                        color: Colors.white,
+                        size: 30,
                       ),
                     ),
                   ),
+
+                  Positioned(
+                    top: 20,
+                    right: 16,
+                    child: InkWell(
+                      onTap: _toggleBookmark,
+                      child: Icon(
+                        isBookmarked ? Icons.bookmark : Icons.bookmark_outline_sharp,
+                        color: isBookmarked ? AppColors.white : Colors.white,
+                        size: 36,
+                      ),
+                    ),
+                  ),
+
                   Column(
                     children: [
                       InkWell(
@@ -278,7 +309,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
 
               SizedBox(height: height * 0.03),
 
-              // Cast Section - Updated design similar to the image
               SectionTitle(title: "Cast"),
               if (castMembers.isNotEmpty) ...[
                 Padding(
@@ -388,7 +418,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
     );
   }
 
-  // Helper method to format large numbers (like 1.5K, 10.2K, etc.)
   String _formatNumber(int number) {
     if (number >= 1000000) {
       return '${(number / 1000000).toStringAsFixed(1)}M';

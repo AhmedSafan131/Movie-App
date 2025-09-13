@@ -9,6 +9,9 @@ import 'package:movie_app/blocs/user/user_bloc.dart';
 import 'package:movie_app/blocs/user/user_event.dart';
 import 'package:movie_app/blocs/user/user_state.dart';
 import 'package:movie_app/models/user_model.dart';
+import 'package:movie_app/repositories/watchlist_repository.dart';
+import 'package:movie_app/models/movies_response.dart';
+import 'package:movie_app/UI/Screen/details_screen/details_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -19,6 +22,37 @@ class ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<ProfileTab> {
   int selectedTabIndex = 0;
+  final WatchlistRepository _watchlistRepository = WatchlistRepository();
+  List<Movies> watchlistMovies = [];
+  bool isLoadingWatchlist = false;
+  int watchlistCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWatchlistData();
+  }
+
+  Future<void> _loadWatchlistData() async {
+    setState(() {
+      isLoadingWatchlist = true;
+    });
+
+    try {
+      final movies = await _watchlistRepository.getWatchlistMovies();
+      final count = await _watchlistRepository.getWatchlistCount();
+
+      setState(() {
+        watchlistMovies = movies;
+        watchlistCount = count;
+        isLoadingWatchlist = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoadingWatchlist = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,23 +98,13 @@ class _ProfileTabState extends State<ProfileTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 50), // Space for status bar
-                  // User Information Section
+                  const SizedBox(height: 50),
                   _buildUserInfoSection(state.user),
-
                   const SizedBox(height: 24),
-
-                  // Action Buttons
                   _buildActionButtons(context, state.user),
-
                   const SizedBox(height: 30),
-
-                  // Secondary Navigation Tabs
                   _buildSecondaryTabs(),
-
                   const SizedBox(height: 20),
-
-                  // Content Area
                   Expanded(child: _buildContentArea()),
                 ],
               ),
@@ -98,7 +122,6 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget _buildUserInfoSection(UserModel user) {
     return Row(
       children: [
-        // Profile Picture and Name
         Column(
           children: [
             Container(
@@ -129,22 +152,17 @@ class _ProfileTabState extends State<ProfileTab> {
             Text(user.name, style: AppStyles.bold16White),
           ],
         ),
-
         const SizedBox(width: 16),
-
-        // Statistics
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Statistics
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Wish List
                   Column(
                     children: [
-                      Text('12', style: AppStyles.bold24White),
+                      Text('$watchlistCount', style: AppStyles.bold24White),
                       const SizedBox(height: 20),
                       Text(
                         'Wish List',
@@ -154,8 +172,6 @@ class _ProfileTabState extends State<ProfileTab> {
                       ),
                     ],
                   ),
-
-                  // History
                   Column(
                     children: [
                       Text('10', style: AppStyles.bold24White),
@@ -180,7 +196,6 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget _buildActionButtons(BuildContext context, UserModel user) {
     return Row(
       children: [
-        // Edit Profile Button (Bigger)
         Expanded(
           flex: 3,
           child: CustomButton(
@@ -190,10 +205,7 @@ class _ProfileTabState extends State<ProfileTab> {
             textColor: AppColors.primaryBlack,
           ),
         ),
-
         const SizedBox(width: 12),
-
-        // Exit Button
         Expanded(
           flex: 2,
           child: CustomButton(
@@ -221,14 +233,14 @@ class _ProfileTabState extends State<ProfileTab> {
           currentPhone: user.phone,
           onProfileUpdated: (newName, newAvatar, newPhone) {
             context.read<UserBloc>().add(
-                  UpdateUser(
-                    user.copyWith(
-                      name: newName,
-                      avatar: newAvatar,
-                      phone: newPhone,
-                    ),
-                  ),
-                );
+              UpdateUser(
+                user.copyWith(
+                  name: newName,
+                  avatar: newAvatar,
+                  phone: newPhone,
+                ),
+              ),
+            );
           },
         ),
       ),
@@ -282,7 +294,6 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget _buildSecondaryTabs() {
     return Row(
       children: [
-        // Watch List Tab
         Expanded(
           child: GestureDetector(
             onTap: () => setState(() => selectedTabIndex = 0),
@@ -318,8 +329,6 @@ class _ProfileTabState extends State<ProfileTab> {
             ),
           ),
         ),
-
-        // History Tab
         Expanded(
           child: GestureDetector(
             onTap: () => setState(() => selectedTabIndex = 1),
@@ -360,11 +369,166 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   Widget _buildContentArea() {
+    if (selectedTabIndex == 0) {
+      return _buildWatchlistContent();
+    } else {
+      return _buildHistoryContent();
+    }
+  }
+
+  Widget _buildWatchlistContent() {
+    if (isLoadingWatchlist) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.accentYellow),
+      );
+    }
+
+    if (watchlistMovies.isEmpty) {
+      return _buildEmptyState('No movies in your watch list');
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.7,
+      ),
+      itemCount: watchlistMovies.length,
+      itemBuilder: (context, index) {
+        final movie = watchlistMovies[index];
+        return _buildMovieCard(movie);
+      },
+    );
+  }
+
+  Widget _buildMovieCard(Movies movie) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => MovieDetailsPage(movie: movie),
+          ),
+        ).then((_) => _loadWatchlistData());
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                movie.mediumCoverImage ?? '',
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.darkGray,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.movie,
+                      color: AppColors.white,
+                      size: 48,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.8),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      movie.title ?? 'Unknown Title',
+                      style: AppStyles.medium14White,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.star,
+                          color: AppColors.accentYellow,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${movie.rating ?? 'N/A'}',
+                          style: AppStyles.medium14White.copyWith(fontSize: 12),
+                        ),
+                        const Spacer(),
+                        Text(
+                          '${movie.year ?? ''}',
+                          style: AppStyles.medium14White.copyWith(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: GestureDetector(
+                onTap: () => _removeFromWatchlist(movie),
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.close,
+                    color: AppColors.white,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryContent() {
+    return _buildEmptyState('No movies in your history');
+  }
+
+  Widget _buildEmptyState(String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Empty State Illustration
           SizedBox(
             width: 100,
             height: 100,
@@ -372,13 +536,11 @@ class _ProfileTabState extends State<ProfileTab> {
               'assets/images/Empty.png',
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
-                // Fallback to custom illustration if image is not found
                 return SizedBox(
                   width: 120,
                   height: 120,
                   child: Stack(
                     children: [
-                      // Popcorn Bucket
                       Positioned(
                         left: 0,
                         bottom: 0,
@@ -394,63 +556,8 @@ class _ProfileTabState extends State<ProfileTab> {
                             ),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Stack(
-                            children: [
-                              // Popcorn kernels
-                              Positioned(
-                                top: 10,
-                                left: 8,
-                                child: Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 15,
-                                right: 8,
-                                child: Container(
-                                  width: 6,
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 25,
-                                left: 12,
-                                child: Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 35,
-                                right: 10,
-                                child: Container(
-                                  width: 7,
-                                  height: 7,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
-
-                      // Soda Cup
                       Positioned(
                         right: 0,
                         bottom: 0,
@@ -461,36 +568,6 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: AppColors.accentYellow,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Stack(
-                            children: [
-                              // Cup lid
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                child: Container(
-                                  height: 15,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                              // Straw
-                              Positioned(
-                                top: 5,
-                                right: 8,
-                                child: Container(
-                                  width: 3,
-                                  height: 25,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     ],
@@ -499,13 +576,9 @@ class _ProfileTabState extends State<ProfileTab> {
               },
             ),
           ),
-
           const SizedBox(height: 20),
-
           Text(
-            selectedTabIndex == 0
-                ? 'No movies in your watch list'
-                : 'No movies in your history',
+            message,
             style: AppStyles.medium16White.copyWith(
               color: AppColors.white,
             ),
@@ -514,5 +587,14 @@ class _ProfileTabState extends State<ProfileTab> {
         ],
       ),
     );
+  }
+
+  Future<void> _removeFromWatchlist(Movies movie) async {
+    try {
+      await _watchlistRepository.removeFromWatchlist(movie.id!);
+      await _loadWatchlistData();
+    } catch (e) {
+      // Handle error silently or log it if needed
+    }
   }
 }
